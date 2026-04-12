@@ -35,7 +35,7 @@ export const getMe = async () => {
         throw new AxiosError(data.message);
     }
 
-    return data.data!;
+    return data;
 }
 
 export const logout = async () => {

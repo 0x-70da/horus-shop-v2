@@ -82,15 +82,13 @@ const Header = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-56">
-                {isLoading && !isError && (
+                { isLoading ? (
                   <DropdownMenuLabel>Loading categories...</DropdownMenuLabel>
-                )}
-                {isError && (
+                ) : isError ? (
                   <DropdownMenuLabel className="text-destructive">
                     {errorMessage || "Failed to load categories"}
                   </DropdownMenuLabel>
-                )}
-                {categories && !isError && !isLoading && categories.map((category) => (
+                ) : categories ? categories.map((category) => (
                   <DropdownMenuItem key={category.id} asChild>
                     <Link
                       to={`/category/${category.slug}`}
@@ -103,7 +101,9 @@ const Header = () => {
                       </span>
                     </Link>
                   </DropdownMenuItem>
-                ))}
+                )): (
+                  <DropdownMenuLabel>No categories found</DropdownMenuLabel>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
 
