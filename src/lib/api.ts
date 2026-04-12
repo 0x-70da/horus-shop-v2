@@ -13,20 +13,25 @@ export const api = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
-    timeout: 10_000,
+    timeout: 5000,
     withCredentials: true,
 });
 
 api.interceptors.response.use(
     response => response,
     async (error: AxiosError) => {
+
+        if (!error.response) {
+            return Promise.reject(new Error(error.message + " try again later"));
+        }
+
         const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
         const is401 = error.response?.status === 401;
-        const isRefreshCall = originalRequest.url?.includes('/auth/refresh');
+        const isAuthCall = originalRequest.url?.startsWith('/auth/');
         const hasRetried = originalRequest._retry;
 
-        if (is401 && !isRefreshCall && !hasRetried) {
+        if (!is401 || isAuthCall || hasRetried) {
             return Promise.reject(error);
         }
 
