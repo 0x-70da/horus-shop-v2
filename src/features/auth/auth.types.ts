@@ -8,3 +8,5 @@ export interface User {
     avatar?: string;
     createdAt: string;
 }
+
+export type AuthUser = Omit<User, 'phone' | 'createdAt'>

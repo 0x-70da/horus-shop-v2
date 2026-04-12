@@ -3,7 +3,7 @@ import { getMe, login, logout, register } from "./auth.api"
 import { useLocation, useNavigate } from "react-router-dom"
 import type { LoginFormData, RegisterFormData } from "./auth.schema"
 import type { ApiError, ApiResponse, ApiSuccess } from "@/types/api.types"
-import type { User } from "./auth.types"
+import type { AuthUser } from "./auth.types"
 import type { AxiosError } from "axios"
 import { getErrorMessage } from "@/lib/get-error-message"
 import { toast } from "sonner"
@@ -30,7 +30,7 @@ export const useLogin = () => {
 
     const redirectTo = (location.state?.from?.pathname as string) ?? "/";
 
-    const { mutate, data, isPending, isError, error } = useMutation<ApiSuccess<User>, AxiosError<ApiError>, LoginFormData>({
+    const { mutate, data, isPending, isError, error } = useMutation<ApiSuccess<AuthUser>, AxiosError<ApiError>, LoginFormData>({
         mutationKey: ["auth", "login"],
         mutationFn: login,
         onSuccess: (response) => {
@@ -46,7 +46,7 @@ export const useLogin = () => {
 }
 
 export const useAuth = () => {
-    const { data, isLoading } = useQuery<ApiSuccess<User>, AxiosError<ApiError>>({
+    const { data, isLoading } = useQuery<ApiSuccess<AuthUser>, AxiosError<ApiError>>({
         queryKey: ["auth", "user"],
         queryFn: getMe,
         retry: false,

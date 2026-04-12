@@ -1,7 +1,7 @@
 import { api } from "@/lib/api";
 import type { ApiResponse } from "@/types/api.types";
 import type { RegisterFormData, LoginFormData } from "./auth.schema";
-import type { User } from "./auth.types";
+import type { AuthUser } from "./auth.types";
 import { AxiosError } from "axios";
 
 export const register = async (registerData: RegisterFormData) => {
@@ -19,7 +19,7 @@ export const register = async (registerData: RegisterFormData) => {
 export const login = async (loginData: LoginFormData) => {
     const { email, password } = loginData;
 
-    const { data } = await api.post<ApiResponse<User>>("/auth/login", { email, password });
+    const { data } = await api.post<ApiResponse<AuthUser>>("/auth/login", { email, password });
 
     if(!data.success) {
         throw new AxiosError(data.message);
@@ -29,7 +29,7 @@ export const login = async (loginData: LoginFormData) => {
 }
 
 export const getMe = async () => {
-    const { data } = await api.get<ApiResponse<User>>("/auth/me");
+    const { data } = await api.get<ApiResponse<AuthUser>>("/auth/me");
 
     if(!data.success) {
         throw new AxiosError(data.message);
