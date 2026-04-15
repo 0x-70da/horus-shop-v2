@@ -3,15 +3,11 @@ import { useAuth } from "../auth.hooks";
 
 
 const GuestGuard = () => {
-    const { isAuthenticated, isLoading } = useAuth();
-    
-    if (isLoading) return <p>Loading...</p>;
+    const { isAuthenticated } = useAuth();
 
-    if (isAuthenticated) {
-        return <Navigate to="/" replace />
-    }
+    if (isAuthenticated) return <Navigate to="/" replace />;
 
-  return <Outlet />
+    return <Outlet />;
 }
 
 export default GuestGuard

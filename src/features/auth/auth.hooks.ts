@@ -46,7 +46,7 @@ export const useLogin = () => {
 }
 
 export const useAuth = () => {
-    const { data, isLoading } = useQuery<ApiSuccess<AuthUser>, AxiosError<ApiError>>({
+    const { data } = useQuery<ApiSuccess<AuthUser>, AxiosError<ApiError>>({
         queryKey: ["auth", "user"],
         queryFn: getMe,
         retry: false,
@@ -56,8 +56,7 @@ export const useAuth = () => {
 
     return {
         user: data?.data ?? null,
-        isAuthenticated: !!data?.data,
-        isLoading,
+        isAuthenticated: !!data?.data || false,
     }
 }
 
