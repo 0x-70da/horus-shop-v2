@@ -29,7 +29,7 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isAuthenticated, user } = useAuth();
   const { mutate: logout } = useLogout();
-  const {data: categories, isLoading, isError, errorMessage} = useCategories();
+  const { categories, isLoading, isError, errorMessage} = useCategories();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
@@ -164,7 +164,7 @@ const Header = () => {
                     {isAuthenticated && user?.avatar ? (
                       <img
                         src={user.avatar}
-                        alt={user.firstName}
+                        alt={user.first_name}
                         className="h-7 w-7 rounded-full object-cover"
                       />
                     ) : (
@@ -176,7 +176,7 @@ const Header = () => {
                   {isAuthenticated ? (
                     <>
                       <DropdownMenuLabel>
-                        Hi, {user?.firstName}!
+                        Hi, {user?.first_name}!
                       </DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem asChild>
