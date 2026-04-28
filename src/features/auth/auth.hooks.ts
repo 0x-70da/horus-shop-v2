@@ -35,7 +35,7 @@ export const useLogin = () => {
         mutationFn: login,
         onSuccess: (response) => {
             if(!response.success) return;
-            queryClient.setQueryData(["auth", "user"], response.data);
+            queryClient.invalidateQueries({ queryKey: ["auth", "user"] });
             toast.success("Login successful!");
             navigate(redirectTo, { replace: true });
         },
