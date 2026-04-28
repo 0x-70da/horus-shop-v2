@@ -1,12 +1,12 @@
 export interface User {
     id: string;
-    first_name: string;
-    last_name: string;
+    firstName: string;
+    lastName: string;
     email: string;
     role: string;
     phone?: string;
     avatar?: string;
-    created_at: string;
+    createdAt: string;
 }
 
 export type AuthUser = Omit<User, 'phone' | 'created_at'>
