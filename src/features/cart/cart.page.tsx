@@ -2,19 +2,34 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { motion } from "framer-motion"
-import { Minus, Plus, Trash2 } from "lucide-react"
+import { ArrowRight, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react"
 import { Link } from "react-router-dom"
-import { useCart, useClearCart, useRemoveFromCart, useUpdateCartItem } from "./cart.hooks"
+import { useCart, useRemoveFromCart, useUpdateCartItem } from "./cart.hooks"
 
 const CartPage = () => {
-    const { items } = useCart();
+    const { items, subtotal } = useCart();
     const { mutate: updateQuantity } = useUpdateCartItem();
     const { mutate: removeFromCart } = useRemoveFromCart();
-    const { mutate: clearCart } = useClearCart();
-    const subtotal = items?.reduce((total, item) => total + item.price * item.quantity, 0) ?? 0;
     const shipping = subtotal > 100 ? 0 : 10;
     const tax = subtotal * 0.07;
     const finalTotal = subtotal + shipping + tax;
+
+    if (items?.length === 0) {
+    return (
+      <div className="container py-20 text-center">
+        <ShoppingBag className="mx-auto h-16 w-16 text-muted-foreground" />
+        <h1 className="mt-4 text-2xl font-bold">Your cart is empty</h1>
+        <p className="mt-2 text-muted-foreground">
+          Add some products to get started!
+        </p>
+        <Link to="/products">
+          <Button className="mt-6 gap-2">
+            Continue Shopping <ArrowRight className="h-4 w-4" />
+          </Button>
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="container py-8">
@@ -34,22 +49,22 @@ const CartPage = () => {
               />
               <div className="flex-1">
                 <Link
-                  to={`/product/${item.productId}`}
+                  to={`/products/${item.productId}`}
                   className="font-semibold hover:text-primary"
                 >
                   {item.name}
                 </Link>
-                {/* {item.selectedVariant && (
+                {item.variantId && (
                   <p className="text-sm text-muted-foreground">
-                    {item.selectedVariant.name}
+                    {item.variantName}
                   </p>
-                )} */}
-                {/* <p className="text-lg font-bold">
+                )}
+                <p className="text-lg font-bold">
                   $
                   {(
-                    item.selectedVariant?.price ?? item.product.price
+                    item.currentPrice
                   ).toLocaleString()}
-                </p> */}
+                </p>
                 <div className="mt-2 flex items-center gap-2">
                   <Button
                     variant="outline"
@@ -57,7 +72,7 @@ const CartPage = () => {
                     className="h-8 w-8"
                     onClick={() =>
                       updateQuantity({
-                        cartItemId: item.productId, quantity: item.quantity - 1
+                        itemId: item.id, quantity: item.quantity - 1
                       })
                     }
                   >
@@ -68,9 +83,9 @@ const CartPage = () => {
                     variant="outline"
                     size="icon"
                     className="h-8 w-8"
-                    onClick={() =>
+                    onClick={() => 
                       updateQuantity({
-                        cartItemId: item.productId, quantity: item.quantity + 1
+                        itemId: item.id, quantity: item.quantity + 1
                       })
                     }
                   >
@@ -80,8 +95,8 @@ const CartPage = () => {
                     variant="ghost"
                     size="icon"
                     className="ml-auto text-destructive"
-                    onClick={() =>
-                      removeFromCart({ cartItemId: item.productId })
+                    onClick={() => 
+                      removeFromCart({ itemId: item.id })
                     }
                   >
                     <Trash2 className="h-4 w-4" />
@@ -98,7 +113,7 @@ const CartPage = () => {
           <CardContent className="space-y-4">
             <div className="flex justify-between">
               <span>Subtotal</span>
-              {/* <span>${subtotal.toFixed(2)}</span> */}
+              <span>${subtotal?.toFixed(2)}</span>
             </div>
             {/* {promoDiscount > 0 && (
               <div className="flex justify-between text-success">
