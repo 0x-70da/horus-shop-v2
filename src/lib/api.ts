@@ -28,10 +28,12 @@ api.interceptors.response.use(
         const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
         const is401 = error.response?.status === 401;
-        const isAuthCall = originalRequest.url?.startsWith('/auth/refresh') || originalRequest.url?.startsWith('/auth/login') || originalRequest.url?.startsWith('/auth/register');
+        const isAuthCall = originalRequest.url?.startsWith('/auth');
+        const isMeCall = originalRequest.url === '/auth/me';
+        const isRefreshCall = originalRequest.url === '/auth/refresh';
         const hasRetried = originalRequest._retry;
 
-        if (!is401 || isAuthCall || hasRetried) {
+        if (!is401 || (isAuthCall && !isMeCall && !isRefreshCall) || hasRetried) {
             return Promise.reject(error);
         }
 
