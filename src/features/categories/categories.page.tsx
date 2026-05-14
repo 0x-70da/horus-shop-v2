@@ -11,12 +11,12 @@ import type { ProductsFilter, SortBy, SortOptions } from "../products/products.t
 const CategoriesPage = () => {
     const { categories, isLoading: isCategoriesLoading, isError: isCategoriesError, errorMessage: categoriesErrorMessage } = useCategories();
     console.log('Categories:', categories);
-    const { slug } = useParams<{ slug: string }>();
+    const { id } = useParams<{ id: string }>();
     const [ searchParams, setSearchParams ] = useSearchParams();
-    const category = categories?.find(c => c.slug === slug);
+    const category = categories?.find(c => c.id === id);
     
     const filters: ProductsFilter = {
-      category: slug,
+      category: id,
       subcategory: searchParams.get('subcategory') ?? undefined,
       sortBy: searchParams.get('sortBy') as SortBy ?? 'newest',
       sortOrder: searchParams.get('sortOrder') as SortOptions ?? 'desc',
@@ -24,7 +24,7 @@ const CategoriesPage = () => {
       limit: searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : 20,
     }
 
-    const { data: products, isLoading: isProductsLoading, isError: isProductsError, errorMessage: productsErrorMessage } = useProducts(filters);
+    const { products, isLoading: isProductsLoading, isError: isProductsError, errorMessage: productsErrorMessage } = useProducts(filters);
 
     if (isCategoriesLoading) {
         return <div>Loading...</div>;
@@ -94,12 +94,12 @@ const CategoriesPage = () => {
               <Badge
                 key={sub.id}
                 variant={
-                  filters.subcategory === sub.slug ? "default" : "outline"
+                  filters.subcategory === sub.id ? "default" : "outline"
                 }
                 className="cursor-pointer px-4 py-2"
-                onClick={() => setSearchParams((prev) => { prev.set('subcategory', sub.slug); return prev; })}
+                onClick={() => setSearchParams((prev) => { prev.set('subcategory', sub.id); return prev; })}
               >
-                {sub.name} {/*({sub.productCount}) */}
+                {sub.name} {`(${sub.products_count})`}
               </Badge>
             ))}
           </div>
