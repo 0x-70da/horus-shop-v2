@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Heart, ShoppingCart, Star } from "lucide-react";
 import { useAddToCart } from "@/features/cart/cart.hooks";
+import { useAddToWishlist, useGetWishlistItems, useRemoveFromWishlist } from "@/features/wishlist/wishlist.hooks";
 
 interface ProductCardProps {
   product: Product;
@@ -14,35 +15,20 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ product, className }: ProductCardProps) => {
-     const { mutate: addToCart } = useAddToCart();
-//   const toggleWishlist = useWishlistStore((s) => s.toggleWishlist);
-//   const isInWishlist = useWishlistStore((s) =>
-//     s.items.some((item) => item.productId === product.id),
-//   );
+    const { mutate: addToCart } = useAddToCart();
+    const { wishlistItems } = useGetWishlistItems();
+    const { mutate: addToWishlist } = useAddToWishlist();
+    const { mutate: removeFromWishlist } = useRemoveFromWishlist();
 
-//   const handleAddToCart = (e: React.MouseEvent) => {
-//     e.preventDefault();
-//     e.stopPropagation();
-//     addToCart(product, 1);
-//     toast.success(`${product.name} added to cart`);
-//   };
-
-//   const handleToggleWishlist = (e: React.MouseEvent) => {
-//     e.preventDefault();
-//     e.stopPropagation();
-//     toggleWishlist(product);
-//     toast.success(
-//       isInWishlist
-//         ? `${product.name} removed from wishlist`
-//         : `${product.name} added to wishlist`,
-//     );
-//   };
-
-  const discountPercent = product.original_price
-    ? Math.round(
-        ((product.original_price - product.price) / product.original_price) * 100,
-      )
-    : 0;
+    const isInWishlist = wishlistItems.some(item => item.product_id === product.id);
+    const handleToggleWishlist = (e: React.MouseEvent) => {
+      e.preventDefault();
+      if (isInWishlist) {
+        removeFromWishlist({ itemId: wishlistItems.find(item => item.product_id === product.id)?.id ?? '' });
+      } else {
+        addToWishlist({ itemId: product.id });
+      }
+    };
 
   return (
     <motion.div
@@ -50,7 +36,7 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <div /*to={`/product/${product.slug}`}*/>
+      <Link to={`/products/${product.id}`}>
         <Card
           className={cn(
             "group relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1",
@@ -60,26 +46,27 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
           {/* Image Container */}
           <div className="relative aspect-square overflow-hidden bg-muted">
             <img
-              src={product.images[0]}
+              src={`${product.images[0]}?w=500&h=500&fit=crop&auto=format&q=80`}
               alt={product.name}
+              loading="lazy"
               className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
 
             {/* Badges */}
             <div className="absolute left-2 top-2 flex flex-col gap-1">
-              {discountPercent > 0 && (
+              {product.discountPercent && product.discountPercent > 0 && (
                 <Badge className="bg-primary text-primary-foreground">
-                  -{discountPercent}%
+                  -{product.discountPercent}%
                 </Badge>
               )}
-              {/* {product.newArrival && (
+              {product.isNewArrival && (
                 <Badge className="bg-info text-info-foreground">New</Badge>
               )}
-              {product.bestSeller && (
+              {product.isBestSeller && (
                 <Badge className="bg-warning text-warning-foreground">
                   Bestseller
                 </Badge>
-              )} */}
+              )}
               {product.stock <= 5 && product.stock > 0 && (
                 <Badge variant="outline" className="bg-background/80">
                   Only {product.stock} left
@@ -96,14 +83,14 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
               size="icon"
               className={cn(
                 "absolute right-2 top-2 h-8 w-8 opacity-0 transition-all group-hover:opacity-100",
-                // isInWishlist && "opacity-100",
+                isInWishlist && "opacity-100",
               )}
-            //   onClick={handleToggleWishlist}
+              onClick={handleToggleWishlist}
             >
               <Heart
                 className={cn(
                   "h-4 w-4",
-                //   isInWishlist && "fill-primary text-primary",
+                  isInWishlist && "fill-primary text-primary",
                 )}
               />
             </Button>
@@ -113,7 +100,10 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
               <Button
                 className="w-full gap-2"
                 size="sm"
-                onClick={() => addToCart({ productId: product.id, quantity: 1})}
+                onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                  e.preventDefault();
+                  addToCart({ itemId: product.id, quantity: 1 });
+                }}
                 disabled={product.stock === 0}
               >
                 <ShoppingCart className="h-4 w-4" />
@@ -125,7 +115,7 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
           <CardContent className="p-4">
             {/* Brand */}
             <p className="mb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              {/* {product.brand} */} product brand
+              {product.brand}
             </p>
 
             {/* Product Name */}
@@ -138,24 +128,24 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
               <Star className="h-3.5 w-3.5 fill-warning text-warning" />
               <span className="text-sm font-medium">{product.rating}</span>
               <span className="text-xs text-muted-foreground">
-                ({product.review_count?.toLocaleString()})
+                ({product.reviewCount?.toLocaleString() ?? 0})
               </span>
             </div>
 
             {/* Price */}
             <div className="flex items-center gap-2">
               <span className="text-lg font-bold">
-                ${product.price.toLocaleString()}
+                ${product.currentPrice?.toLocaleString() ?? product.price.toLocaleString()}
               </span>
-              {product.original_price && (
+              {product.currentPrice && product.currentPrice !== product.price && (
                 <span className="text-sm text-muted-foreground line-through">
-                  ${product.original_price.toLocaleString()}
+                  ${product.price.toLocaleString()}
                 </span>
               )}
             </div>
           </CardContent>
         </Card>
-      </div>
+      </Link>
     </motion.div>
   );
 };
