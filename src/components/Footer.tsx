@@ -4,8 +4,11 @@ import { Separator } from "./ui/separator"
 import { Field, FieldError } from "./ui/field"
 import { Button } from "./ui/button"
 import { Input } from "./ui/input"
+import { useCategories } from "@/features/categories/categories.hooks"
 
 const Footer = () => {
+  const { categories } = useCategories();
+
   return (
     <footer className="border-t border-border bg-card">
       {/* Features bar */}
@@ -134,7 +137,7 @@ const Footer = () => {
           <div>
             <h4 className="mb-4 font-semibold">Categories</h4>
             <ul className="space-y-2">
-              {/* {categories.slice(0, 6).map((category) => (
+              {categories.slice(0, 6).map((category) => (
                 <li key={category.id}>
                   <Link
                     to={`/category/${category.slug}`}
@@ -143,7 +146,7 @@ const Footer = () => {
                     {category.name}
                   </Link>
                 </li>
-              ))} */}
+              ))}
             </ul>
           </div>
 

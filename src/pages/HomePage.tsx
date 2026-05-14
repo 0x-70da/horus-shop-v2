@@ -4,9 +4,11 @@ import { ArrowRight, ChevronRight, Zap, Star, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { useCategories } from "@/features/categories/categories.hooks";
+import { useBrands, useCategories } from "@/features/categories/categories.hooks";
 import ProductGrid from "@/features/products/components/ProductGrid";
 import { useProducts } from "@/features/products/products.hooks";
+import { usePromoBanners } from "@/features/promo/promo.hooks";
+import { useFlashDeals } from "@/features/flash/flash.hooks";
 
 // ============================================
 // Home Page
@@ -16,7 +18,15 @@ import { useProducts } from "@/features/products/products.hooks";
 
 const Home = () => {
   const { categories } = useCategories();
-  const {data: products} = useProducts();
+  const { products } = useProducts();
+  const { brands } = useBrands();
+  const { promoBanners } = usePromoBanners();
+  const { flashDeals } = useFlashDeals();
+  const bestSellers = products.filter((p) => p.totalSold > 100);
+  const newArrivals = [...products]
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, 8);
+  const featuredProducts = products.filter((p) => p.rating >= 4.5).slice(0, 8);
 
   return (
     <div className="flex flex-col">
@@ -26,13 +36,13 @@ const Home = () => {
           <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
             {/* Hero Content */}
             <motion.div
-              initial={{ opacity: 0, x: -50 }}
+              initial={false}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
               className="flex flex-col justify-center"
             >
               <Badge variant="outline" className="mb-4 w-fit">
-                <Zap className="mr-1 h-3 w-3" /> Black Friday Sale
+                <Zap className="mr-1 h-3 w-3" /> {promoBanners[0]?.title}
               </Badge>
               <h1 className="mb-4 text-4xl font-bold leading-tight tracking-tight md:text-5xl lg:text-6xl">
                 The Future of
@@ -73,26 +83,23 @@ const Home = () => {
 
             {/* Hero Image */}
             <motion.div
-              initial={{ opacity: 0, x: 50 }}
+              initial={false}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
               className="relative"
             >
               <div className="relative aspect-square overflow-hidden rounded-3xl bg-linear-to-br from-muted to-muted/50">
-                {/* <img
-                  src={
-                    promoBanners[0]?.image ||
-                    "https://images.unsplash.com/photo-1696446701796-da61225697cc?w=800&h=800&fit=crop"
-                  }
+                <img
+                  src={promoBanners[0]?.image}
                   alt="Featured product"
                   className="h-full w-full object-cover"
-                /> */}
+                />
                 {/* Floating product card */}
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={false}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: 0.6 }}
-                  className="absolute bottom-4 left-4 right-4 rounded-2xl bg-background/90 p-4 backdrop-blur-lg"
+                  className="absolute bottom-4 left-4 right-4 rounded-2xl bg-background/90 p-4"
                 >
                   <div className="flex items-center justify-between">
                     <div>
@@ -100,7 +107,7 @@ const Home = () => {
                       <p className="font-semibold">iPhone 15 Pro Max</p>
                       <p className="text-lg font-bold text-primary">$1,199</p>
                     </div>
-                    <Link to="/product/iphone-15-pro-max">
+                    <Link to="/products/iphone-15-pro-max">
                       <Button size="sm">View</Button>
                     </Link>
                   </div>
@@ -139,7 +146,7 @@ const Home = () => {
             {categories?.map((category, index) => (
               <motion.div
                 key={category.id}
-                initial={{ opacity: 0, y: 20 }}
+                initial={false}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.1 }}
               >
@@ -157,7 +164,7 @@ const Home = () => {
                         {category.name}
                       </h3>
                       <p className="text-xs text-muted-foreground">
-                        {/* {category.productCount} products */}
+                        {category.products_count} products
                       </p>
                     </CardContent>
                   </Card>
@@ -193,7 +200,7 @@ const Home = () => {
             </Link>
           </div>
 
-          <ProductGrid products={products} columns={4} /> {/* featured products should ideally come from a separate API endpoint, but using all products for now*/}
+          <ProductGrid products={featuredProducts} columns={4} /> {/* featured products should ideally come from a separate API endpoint, but using all products for now*/}
         </div>
       </section>
 
@@ -218,7 +225,7 @@ const Home = () => {
             </Link>
           </div>
 
-          {/* <ProductGrid products={bestSellers} columns={4} /> */}
+          <ProductGrid products={bestSellers} columns={4} />
         </div>
       </section>
 
@@ -230,7 +237,7 @@ const Home = () => {
               <div className="flex flex-col justify-center">
                 <Badge className="mb-4 w-fit">Limited Time Offer</Badge>
                 <h2 className="mb-2 text-3xl font-bold md:text-4xl">
-                  Get 20% Off
+                  {promoBanners[0]?.title}
                 </h2>
                 <p className="mb-6 text-lg text-muted-foreground">
                   On all audio products. Use code{" "}
@@ -281,7 +288,7 @@ const Home = () => {
             </Link>
           </div>
 
-          {/* <ProductGrid products={newArrivals} columns={4} /> */}
+          <ProductGrid products={newArrivals} columns={4} />
         </div>
       </section>
 
@@ -292,13 +299,13 @@ const Home = () => {
             Trusted by Leading Brands
           </h2>
           <div className="flex flex-wrap items-center justify-center gap-8 opacity-60">
-            {["Apple", "Samsung", "Sony", "Microsoft", "Dell", "Bose"].map(
+            {brands.map(
               (brand) => (
                 <div
-                  key={brand}
+                  key={brand.id}
                   className="text-2xl font-bold tracking-tight text-muted-foreground"
                 >
-                  {brand}
+                  {brand.name}
                 </div>
               ),
             )}

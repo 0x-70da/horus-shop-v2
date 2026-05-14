@@ -1,12 +1,22 @@
 import { Link } from "react-router-dom";
 import { Input } from "./ui/input";
 import {
+  Book,
   ChevronDown,
+  Dumbbell,
   Heart,
+  Home,
+  Laptop,
   Menu,
+  Puzzle,
   Search,
+  Shirt,
   ShoppingCart,
+  Smartphone,
+  Sofa,
+  Sparkle,
   User,
+  Watch,
   X,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -21,15 +31,37 @@ import {
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { useCategories } from "../features/categories/categories.hooks"
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useAuth, useLogout } from "@/features/auth/auth.hooks";
+import { useGetWishlistItems } from "@/features/wishlist/wishlist.hooks";
+import { useCart } from "@/features/cart/cart.hooks";
+
+const categoryIcons: Record<string, React.ReactNode> = {
+  smartphone: <Smartphone className="h-4 w-4" />,
+  laptop: <Laptop className="h-4 w-4" />,
+  book: <Book className="h-4 w-4" />,
+  shirt: <Shirt className="h-4 w-4" />,
+  watch: <Watch className="h-4 w-4" />,
+  home: <Home className="h-4 w-4" />,
+  sofa: <Sofa className="h-4 w-4" />,
+  sparkle: <Sparkle className="h-4 w-4" />,
+  puzzle: <Puzzle className="h-4 w-4" />,
+  dumbbell: <Dumbbell className="h-4 w-4" />,
+};
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isAuthenticated, user } = useAuth();
   const { mutate: logout } = useLogout();
   const { categories, isLoading, isError, errorMessage} = useCategories();
+  const { wishlistItems } = useGetWishlistItems();
+  const { items: cartItems } = useCart();
+
+  const wishlistItemsCount = wishlistItems.length;
+  const cartItemsCount = useMemo(() => {
+    return cartItems?.reduce((total: number, item: { quantity: number }) => total + item.quantity, 0);
+  }, [cartItems]);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
@@ -91,13 +123,13 @@ const Header = () => {
                 ) : categories ? categories.map((category) => (
                   <DropdownMenuItem key={category.id} asChild>
                     <Link
-                      to={`/category/${category.slug}`}
+                      to={`/category/${category.id}`}
                       className="flex items-center gap-2"
                     >
-                      {category.icon}
+                      {categoryIcons[category.icon]}
                       {category.name}
                       <span className="ml-auto text-xs text-muted-foreground">
-                        {/* {category.productCount} */} products count
+                        {category.products_count}
                       </span>
                     </Link>
                   </DropdownMenuItem>
@@ -131,14 +163,14 @@ const Header = () => {
             <Link to="/wishlist" className="relative">
               <Button variant="ghost" size="icon">
                 <Heart className="h-5 w-5" />
-                {/* {wishlistItemCount > 0 && (
+                {wishlistItemsCount > 0 && (
                   <Badge
                     variant="destructive"
                     className="absolute -right-1 -top-1 h-5 w-5 rounded-full p-0 text-[10px]"
                   >
-                    {wishlistItemCount}
+                    {wishlistItemsCount}
                   </Badge>
-                )} */}
+                )}
               </Button>
             </Link>
 
@@ -146,14 +178,14 @@ const Header = () => {
             <Link to="/cart" className="relative">
               <Button variant="ghost" size="icon">
                 <ShoppingCart className="h-5 w-5" />
-                {/* {cartItemCount > 0 && (
+                {cartItemsCount > 0 && (
                   <Badge
                     variant="destructive"
                     className="absolute -right-1 -top-1 h-5 w-5 rounded-full p-0 text-[10px]"
                   >
-                    {cartItemCount > 99 ? "99+" : cartItemCount}
+                    {cartItemsCount > 99 ? "99+" : cartItemsCount}
                   </Badge>
-                )} */}
+                )}
               </Button>
             </Link>
 
@@ -164,7 +196,7 @@ const Header = () => {
                     {isAuthenticated && user?.avatar ? (
                       <img
                         src={user.avatar}
-                        alt={user.first_name}
+                        alt={user.firstName}
                         className="h-7 w-7 rounded-full object-cover"
                       />
                     ) : (
@@ -176,7 +208,7 @@ const Header = () => {
                   {isAuthenticated ? (
                     <>
                       <DropdownMenuLabel>
-                        Hi, {user?.first_name}!
+                        Hi, {user?.firstName}!
                       </DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem asChild>
@@ -252,7 +284,7 @@ const Header = () => {
                     className="flex items-center gap-2 px-4 py-2 text-sm transition-colors hover:bg-accent rounded-md"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    {category.icon}
+                    {categoryIcons[category.icon]}
                     {category.name}
                   </Link>
                 ))}
