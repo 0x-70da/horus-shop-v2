@@ -2,17 +2,59 @@ export interface Product {
     id: string;
     name: string;
     slug: string;
-    description: string;
+    description: string | null;
     price: number;
-    original_price: number;
-    brand: string;
-    rating: number;
-    review_count: number;
+    currentPrice: number | null;
     stock: number;
-    tags: string[];
+    totalSold: number;
+    categoryId: string;
+    subcategoryId: string | null;
+    brandId: string | null;
+    category: string;
+    subcategory: string | undefined;
+    brand: string | undefined;
+    rating: number;
+    reviewCount: number;
     images: string[];
-    category_slug: string;
-    created_at: string;
+    tags: string[];
+    isActive: boolean;
+    createdAt: string;
+    updatedAt: string;
+    dealId: string | null;
+    discountPercent: number | null;
+    dealEndsAt: string | null;
+    dealQuantity: number | null;
+    dealSoldCount: number | null;
+    isBestSeller: boolean;
+    isNewArrival: boolean;
+    isFeatured: boolean;
+    variants: ProductVariant[];
+    reviews: Review[];
+}
+
+export interface ProductVariant {
+    id: string;
+    name: string;
+    productId: string;
+    price: number;
+    stock: number;
+    sku: string;
+    attributes: Record<string, string>;
+    isActive: boolean;
+    createdAt: string;
+}
+
+export interface Review {
+  id: string;
+  productId: string;
+  userId: string;
+  orderId: string | null;
+  title: string | null;
+  comment: string | null;
+  rating: number;
+  helpful: number;
+  verified: boolean;
+  createdAt: string;
 }
 
 export interface Pagination {
@@ -33,6 +75,10 @@ export type SortOptions = "asc" | "desc";
 export interface ProductsFilter {
     category?: string;
     subcategory?: string;
+    brand?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    inStock?: "true" | "false";
     sortBy?: SortBy;
     sortOrder?: SortOptions;
     page?: number;
