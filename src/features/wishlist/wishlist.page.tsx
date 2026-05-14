@@ -6,11 +6,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useAddToCart } from "../cart/cart.hooks";
 
 const WishlistPage = () => {
-  const { data: items } = useGetWishlistItems();
+  const { wishlistItems } = useGetWishlistItems();
   const {mutate: addToCart} = useAddToCart();
   const {mutate: removeFromWishlist} = useRemoveFromWishlist();
 
-  if (items?.length === 0) {
+  if (!wishlistItems.length) {
     return (
       <div className="container py-20 text-center">
         <Heart className="mx-auto h-16 w-16 text-muted-foreground" />
@@ -27,10 +27,10 @@ const WishlistPage = () => {
 
   return (
     <div className="container py-8">
-      <h1 className="mb-8 text-3xl font-bold">Wishlist ({items?.length})</h1>
+      <h1 className="mb-8 text-3xl font-bold">Wishlist ({wishlistItems.length})</h1>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {items?.map((item) => (
-          <Card key={item.productId} className="overflow-hidden">
+        {wishlistItems.map((item) => (
+          <Card key={item.product_id} className="overflow-hidden">
             <div className="aspect-square overflow-hidden">
               <img
                 src={item.images[0]}
@@ -40,7 +40,7 @@ const WishlistPage = () => {
             </div>
             <CardContent className="p-4">
               <Link
-                to={`/product/${item.slug}`}
+                to={`/product/${item.product_id}`}
                 className="font-semibold hover:text-primary line-clamp-2"
               >
                 {item.name}
@@ -48,14 +48,11 @@ const WishlistPage = () => {
               <p className="mt-1 text-lg font-bold">
                 ${item.price.toLocaleString()}
               </p>
-              {/* {item.price < item.priceAtAdd && (
-                <p className="text-sm text-success">Price dropped!</p>
-              )} */}
               <div className="mt-3 flex gap-2">
                 <Button
                   size="sm"
                   className="flex-1 gap-1"
-                  onClick={() => addToCart({ productId: item.productId, quantity: 1 })}
+                  onClick={() => addToCart({ itemId: item.product_id, quantity: 1 })}
                 >
                   <ShoppingCart className="h-4 w-4" />
                   Add to Cart
@@ -63,7 +60,7 @@ const WishlistPage = () => {
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() => removeFromWishlist({ productId: item.productId })}
+                  onClick={() => removeFromWishlist({ itemId: item.id })}
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
