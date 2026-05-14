@@ -10,6 +10,7 @@ import { useSearchParams } from "react-router-dom"
 import type { ProductsFilter, SortBy, SortOptions } from "./products.types"
 import { useState } from "react"
 import ProductsFilterContent from "./components/ProductsFiltersContent"
+import { useBrands, useCategories } from "../categories/categories.hooks"
 
 const ProductsPage = () => {
       const [ searchParams, setSearchParams ] = useSearchParams();
@@ -19,13 +20,31 @@ const ProductsPage = () => {
       const filters: ProductsFilter = {
         category: searchParams.get('category') ?? undefined,
         subcategory: searchParams.get('subcategory') ?? undefined,
+        brand: searchParams.get('brand') ?? undefined,
         sortBy: searchParams.get('sortBy') as SortBy ?? 'newest',
+        minPrice: searchParams.get('minPrice') ? parseInt(searchParams.get('minPrice')!) : undefined,
+        maxPrice: searchParams.get('maxPrice') ? parseInt(searchParams.get('maxPrice')!) : undefined,
+        inStock: searchParams.get('inStock') as "true" | "false" ?? undefined,
         sortOrder: searchParams.get('sortOrder') as SortOptions ?? 'desc',
         page: searchParams.get('page') ? parseInt(searchParams.get('page')!) : 1,
         limit: searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : 20,
       }
   
-      const { data: products, pagination } = useProducts(filters);
+      const { products } = useProducts(filters);
+      const { categories } = useCategories();
+      const { brands } = useBrands();
+
+      const activeFiltersCount = searchParams.getAll("category").length + searchParams.getAll("brand").length + (searchParams.get("minPrice") ? 1 : 0) + (searchParams.get("maxPrice") ? 1 : 0) + (searchParams.get("inStock") ? 1 : 0);
+
+      const clearFilters= () => {
+        searchParams.delete("category");
+        searchParams.delete("subcategory");
+        searchParams.delete("brand");
+        searchParams.delete("minPrice");
+        searchParams.delete("maxPrice");
+        searchParams.delete("inStock");
+        setSearchParams(searchParams);
+      }
 
   return (
     <div className="container py-8">
@@ -43,11 +62,11 @@ const ProductsPage = () => {
           <div className="sticky top-24">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-semibold">Filters</h2>
-              {/* {activeFiltersCount > 0 && (
+              {activeFiltersCount > 0 && (
                 <Badge variant="secondary">{activeFiltersCount} active</Badge>
-              )} */}
+              )}
             </div>
-            <ProductsFilterContent />
+            <ProductsFilterContent activeFiltersCount={activeFiltersCount} clearFilters={clearFilters} />
           </div>
         </aside>
 
@@ -62,11 +81,11 @@ const ProductsPage = () => {
                   <Button variant="outline" className="gap-2 lg:hidden">
                     <SlidersHorizontal className="h-4 w-4" />
                     Filters
-                    {/* {activeFiltersCount > 0 && (
+                    {activeFiltersCount > 0 && (
                       <Badge variant="secondary" className="ml-1">
                         {activeFiltersCount}
                       </Badge>
-                    )} */}
+                    )}
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="left" className="w-80 overflow-y-auto">
@@ -74,14 +93,14 @@ const ProductsPage = () => {
                     <SheetTitle>Filters</SheetTitle>
                   </SheetHeader>
                   <div className="mt-6">
-                    <ProductsFilterContent />
+                    <ProductsFilterContent activeFiltersCount={activeFiltersCount} clearFilters={clearFilters} />
                   </div>
                 </SheetContent>
               </Sheet>
 
               {/* Active Filters */}
               <AnimatePresence>
-                {searchParams.getAll("categories").map((cat) => (
+                {searchParams.getAll("category").map((cat) => (
                   <motion.div
                     key={cat}
                     initial={{ opacity: 0, scale: 0.8 }}
@@ -91,14 +110,14 @@ const ProductsPage = () => {
                     <Badge
                       variant="secondary"
                       className="cursor-pointer gap-1"
-                      // onClick={() => toggleCategory(cat)}
+                      onClick={() => setSearchParams((prev) => { prev.delete("category"); return prev; })}
                     >
-                      {/* {categories.find((c) => c.slug === cat)?.name} */}
+                      {categories.find((c) => c.id === cat)?.name}
                       <X className="h-3 w-3" />
                     </Badge>
                   </motion.div>
                 ))}
-                {searchParams.getAll("brands").map((brand) => (
+                {searchParams.getAll("brand").map((brand) => (
                   <motion.div
                     key={brand}
                     initial={{ opacity: 0, scale: 0.8 }}
@@ -108,9 +127,9 @@ const ProductsPage = () => {
                     <Badge
                       variant="secondary"
                       className="cursor-pointer gap-1"
-                      // onClick={() => toggleBrand(brand)}
+                      onClick={() => setSearchParams((prev) => { prev.delete("brand"); return prev; })}
                     >
-                      {brand}
+                      {brands.find((b) => b.id === brand)?.name}
                       <X className="h-3 w-3" />
                     </Badge>
                   </motion.div>
@@ -121,7 +140,7 @@ const ProductsPage = () => {
             <div className="flex items-center gap-2">
               {/* Sort */}
               <Select
-                value={`${searchParams.get("sortBy") ?? undefined}-${searchParams.get("sortOrder") ?? undefined}`}
+                value={`${searchParams.get("sortBy") ?? 'popularity'}-${searchParams.get("sortOrder") ?? 'desc'}`}
                 onValueChange={(value) => setSearchParams((prev) => {
                   prev.set("sortBy", value.split("-")[0]);
                   prev.set("sortOrder", value.split("-")[1]);
