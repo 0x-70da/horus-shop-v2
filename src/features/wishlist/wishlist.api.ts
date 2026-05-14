@@ -12,9 +12,9 @@ export const getWishlistItems = async () => {
     return data;
 }
 
-export const addToWishlist = async (productId: string) => {
+export const addToWishlist = async (itemId: string) => {
     const { data } = await api.post<ApiResponse<WishlistItem>>('/wishlist', {
-        productId,
+        itemId,
     });
 
     if (!data.success) {
@@ -24,8 +24,8 @@ export const addToWishlist = async (productId: string) => {
     return data;
 }
 
-export const removeFromWishlist = async (productId: string) => {
-    const { data } = await api.delete<ApiResponse<null>>(`/wishlist/${productId}`);
+export const removeFromWishlist = async (itemId: string) => {
+    const { data } = await api.delete<ApiResponse<null>>(`/wishlist/${itemId}`);
 
     if (!data.success) {
         throw new Error(data.message);
