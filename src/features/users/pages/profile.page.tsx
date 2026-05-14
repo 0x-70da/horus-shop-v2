@@ -34,7 +34,7 @@ const ProfilePage = () => {
           </CardHeader>
           <CardContent className="space-y-2">
             <p>
-              <strong>Name:</strong> {user?.first_name} {user?.last_name}
+              <strong>Name:</strong> {user?.firstName} {user?.lastName}
             </p>
             <p>
               <strong>Email:</strong> {user?.email}
