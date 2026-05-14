@@ -1,9 +1,9 @@
 import { api } from "@/lib/api"
-import type { CartItem } from "./cart.types";
+import type { CartItem, CartResponse } from "./cart.types";
 import type { ApiResponse } from "@/types/api.types";
 
 export const getCartItems = async () => {
-    const { data } = await api.get<ApiResponse<CartItem[]>>('/cart');
+    const { data } = await api.get<ApiResponse<CartResponse>>('/cart');
 
     if(!data.success) {
         throw new Error(data.message);
@@ -12,9 +12,10 @@ export const getCartItems = async () => {
     return data;
 }
 
-export const addToCart = async (productId: string, quantity: number = 1) => {
+export const addToCart = async (itemId: string, variantId: string | null = null, quantity: number = 1) => {
     const { data } = await api.post<ApiResponse<CartItem>>('/cart', {
-        productId,
+        itemId,
+        variantId,
         quantity,
     });
 
@@ -25,8 +26,9 @@ export const addToCart = async (productId: string, quantity: number = 1) => {
     return data;
 }
 
-export const updateCartItem = async (cartItemId: string, quantity: number) => {
-    const { data } = await api.put<ApiResponse<CartItem>>(`/cart/${cartItemId}`, {
+export const updateCartItem = async (itemId: string, quantity: number) => {
+  if (quantity === 0) return removeFromCart(itemId);
+    const { data } = await api.patch<ApiResponse<CartItem>>(`/cart/${itemId}`, {
         quantity,
     });
 
@@ -37,8 +39,8 @@ export const updateCartItem = async (cartItemId: string, quantity: number) => {
     return data;
 }
 
-export const removeFromCart = async (cartItemId: string) => {
-    const { data } = await api.delete<ApiResponse>(`/cart/${cartItemId}`);
+export const removeFromCart = async (itemId: string) => {
+    const { data } = await api.delete<ApiResponse>(`/cart/${itemId}`);
 
     if(!data.success) {
         throw new Error(data.message);
