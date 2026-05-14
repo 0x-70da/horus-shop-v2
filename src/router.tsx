@@ -11,6 +11,12 @@ import ProductsPage from "./features/products/products.page";
 import CartPage from "./features/cart/cart.page";
 import ProfilePage from "./features/users/pages/profile.page";
 import WishlistPage from "./features/wishlist/wishlist.page";
+import ForgotPasswordPage from "./features/auth/pages/forgot-password.page";
+import VerifyCodePage from "./features/auth/pages/verify-code.page";
+import ResetPasswordPage from "./features/auth/pages/reset-password.page";
+import ProductDetailsPage from "./features/products/product-details.page";
+import OrdersPage from "./features/orders/orders.page";
+import OrderDetailsPage from "./features/orders/order-details.page";
 
 export const router = createBrowserRouter([
     {
@@ -22,6 +28,9 @@ export const router = createBrowserRouter([
             children: [
               { path: "/login", element: <LoginPage /> },
               { path: "/register", element: <RegisterPage /> },
+              { path: "/forgot-password", element: <ForgotPasswordPage /> },
+              { path: "/verify-code", element: <VerifyCodePage /> },
+              { path: "/reset-password", element: <ResetPasswordPage /> },
             ]
           }
         ]
@@ -33,7 +42,8 @@ export const router = createBrowserRouter([
         children: [
             { index: true, element: <HomePage /> },
             { path: "products", element: <ProductsPage /> },
-            { path: "category/:slug", element: <CategoriesPage /> },
+            { path: "products/:id", element: <ProductDetailsPage /> },
+            { path: "category/:id", element: <CategoriesPage /> },
         ]
     },
 
@@ -46,7 +56,8 @@ export const router = createBrowserRouter([
                 children: [
                     { path: "cart", element: <CartPage /> },
                     { path: "wishlist", element: <WishlistPage /> },
-                    { path: "orders", element: <p>Orders Page</p> },
+                    { path: "orders", element: <OrdersPage /> },
+                    { path: "orders/:orderId", element: <OrderDetailsPage /> },
                     { path: "profile", element: <ProfilePage /> },
                 ]
             }

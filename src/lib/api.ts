@@ -28,10 +28,12 @@ api.interceptors.response.use(
         const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
         const is401 = error.response?.status === 401;
-        const isAuthCall = originalRequest.url?.startsWith('/auth/');
+        const isAuthCall = originalRequest.url?.startsWith('/auth');
+        const isMeCall = originalRequest.url === '/auth/me';
+        const isRefreshCall = originalRequest.url === '/auth/refresh';
         const hasRetried = originalRequest._retry;
 
-        if (!is401 || isAuthCall || hasRetried) {
+        if (!is401 || (isAuthCall && !isMeCall && !isRefreshCall) || hasRetried) {
             return Promise.reject(error);
         }
 
@@ -50,7 +52,9 @@ api.interceptors.response.use(
             return api(originalRequest);
         } catch (refreshError) {
             processQueue(refreshError);
-            window.location.href = '/login';
+            if (window.location.pathname !== '/login'){
+              window.location.href = '/login';
+            }
             return Promise.reject(refreshError);
         } finally {
             isRefreshing = false;
