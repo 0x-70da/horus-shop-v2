@@ -1,7 +1,7 @@
 import { api } from "@/lib/api";
 import type { ApiResponse } from "@/types/api.types";
-import type { RegisterFormData, LoginFormData } from "./auth.schema";
-import type { AuthUser } from "./auth.types";
+import type { RegisterFormData, LoginFormData, ForgotPasswordFormData, VerifyCodeOrResetTokenFormData } from "./auth.schema";
+import type { AuthUser, ResetPasswordRequest } from "./auth.types";
 import { AxiosError } from "axios";
 
 export const register = async (registerData: RegisterFormData) => {
@@ -26,6 +26,41 @@ export const login = async (loginData: LoginFormData) => {
     }
 
     return data;
+}
+
+export const forgotPassword = async (forgotPasswordData: ForgotPasswordFormData) => {
+  const { email } = forgotPasswordData;
+  
+  const { data } = await api.post<ApiResponse>("/auth/forgot-password", { email });
+
+  if(!data.success) {
+      throw new AxiosError(data.message);
+  }
+
+  return data;
+}
+
+export const verifyCodeOrResetToken = async (verifyData: VerifyCodeOrResetTokenFormData) => {
+  const { code, token } = verifyData;
+  const { data } = await api.post<ApiResponse<{resetToken: string}>>("/auth/verify", { code }, { params: { token }});
+
+  if(!data.success) {
+      throw new AxiosError(data.message);
+  }
+
+  return data;
+}
+
+export const resetPassword = async (resetPasswordData: ResetPasswordRequest) => {
+  const { resetToken, newPassword, confirmNewPassword } = resetPasswordData;
+
+  const { data } = await api.post<ApiResponse>("/auth/reset-password", { resetToken, newPassword, confirmNewPassword });
+
+  if(!data.success) {
+      throw new AxiosError(data.message);
+  }
+
+  return data;
 }
 
 export const getMe = async () => {

@@ -1,9 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { getMe, login, logout, register } from "./auth.api"
+import { forgotPassword, getMe, login, logout, register, resetPassword, verifyCodeOrResetToken } from "./auth.api"
 import { useLocation, useNavigate } from "react-router-dom"
-import type { LoginFormData, RegisterFormData } from "./auth.schema"
+import type { ForgotPasswordFormData, LoginFormData, RegisterFormData } from "./auth.schema"
 import type { ApiError, ApiResponse, ApiSuccess } from "@/types/api.types"
-import type { AuthUser } from "./auth.types"
+import type { AuthUser, ResetPasswordRequest } from "./auth.types"
 import type { AxiosError } from "axios"
 import { getErrorMessage } from "@/lib/get-error-message"
 import { toast } from "sonner"
@@ -43,6 +43,54 @@ export const useLogin = () => {
     const errorMessage = getErrorMessage(error);
     const successMessage = data?.message;
     return { mutate, isPending, isError, errorMessage, successMessage };
+}
+
+export const useForgotPassword = () => {
+  const navigate = useNavigate();
+  const { mutate, data, isPending, isError, error } = useMutation<ApiSuccess, AxiosError<ApiError>, ForgotPasswordFormData>({
+      mutationKey: ["auth", "forgotPassword"],
+      mutationFn: forgotPassword,
+      onSuccess: (response) => {
+          if(!response.success) return;
+          toast.success(response.message);
+          navigate("/verify-code");
+      }
+  });
+  const errorMessage = getErrorMessage(error);
+  const successMessage = data?.message;
+  return { mutate, isPending, isError, errorMessage, successMessage };
+}
+
+export const useVerify = () => {
+  const navigate = useNavigate();
+  const { mutate, data, isPending, isError, error } = useMutation<ApiSuccess<{resetToken: string}>, AxiosError<ApiError>, { code?: string; token?: string}>({
+      mutationKey: ["auth", "verify"],
+      mutationFn: verifyCodeOrResetToken,
+      onSuccess: (response) => {
+          if(!response.success) return;
+          toast.success(response.message);
+          navigate("/reset-password", { state: { resetToken: response.data?.resetToken } });
+      }
+  });
+  const errorMessage = getErrorMessage(error);
+  const successMessage = data?.message;
+  return { mutate, isPending, isError, errorMessage, successMessage };
+}
+
+export const useResetPassword = () => {
+  const navigate = useNavigate();
+  const { mutate, data, isPending, isError, error } = useMutation<ApiSuccess, AxiosError<ApiError>, ResetPasswordRequest>({
+      mutationKey: ["auth", "resetPassword"],
+      mutationFn: resetPassword,
+      onSuccess: (response) => {
+          if(!response.success) return;
+          toast.success(response.message);
+          navigate("/login");
+      }
+  });
+  const errorMessage = getErrorMessage(error);
+  const successMessage = data?.message;
+  return { mutate, isPending, isError, errorMessage, successMessage };
 }
 
 export const useAuth = () => {

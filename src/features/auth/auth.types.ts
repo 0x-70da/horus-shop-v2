@@ -9,4 +9,10 @@ export interface User {
     createdAt: string;
 }
 
-export type AuthUser = Omit<User, 'phone' | 'created_at'>
+export type AuthUser = Omit<User, 'phone' | 'createdAt'>
+
+export interface ResetPasswordRequest {
+    resetToken: string;
+    newPassword: string;
+    confirmNewPassword: string;
+}
