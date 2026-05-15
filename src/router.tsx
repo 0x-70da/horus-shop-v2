@@ -17,6 +17,10 @@ import ResetPasswordPage from "./features/auth/pages/reset-password.page";
 import ProductDetailsPage from "./features/products/product-details.page";
 import OrdersPage from "./features/orders/orders.page";
 import OrderDetailsPage from "./features/orders/order-details.page";
+import CheckoutPage from "./features/orders/checkout.page";
+import CheckoutPaymentPage from "./features/payments/checkout.payment.page";
+import CheckoutPaymentStatusPage from "./features/payments/checkout.payment.status.page";
+import AddressesPage from "./features/addresses/address.page";
 
 export const router = createBrowserRouter([
     {
@@ -59,6 +63,10 @@ export const router = createBrowserRouter([
                     { path: "orders", element: <OrdersPage /> },
                     { path: "orders/:orderId", element: <OrderDetailsPage /> },
                     { path: "profile", element: <ProfilePage /> },
+                    { path: "checkout", element: <CheckoutPage /> },
+                    { path: "checkout/payment", element: <CheckoutPaymentPage /> },
+                    { path : "checkout/payment/status", element: <CheckoutPaymentStatusPage /> },
+                    { path: "profile/addresses", element: <AddressesPage /> }
                 ]
             }
         ]
