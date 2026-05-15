@@ -389,6 +389,7 @@ const ProductDetailsPage = () => {
                 </div>
 
                 <div className="space-y-2">
+                  <p className="text-muted-foreground text-sm">Rating Distribution coming soon</p>
                 </div>
               </div>
 
@@ -457,8 +458,12 @@ const ProductDetailsPage = () => {
             </div>
           </TabsContent>
         </Tabs>
-      </div>
 
+        <section className="mt-16">
+          <h2 className="mb-6 text-2xl font-bold">Related Products</h2>
+          <p className="text-muted-foreground">Related Products coming soon</p>
+        </section>
+      </div>
 
     </div>
   )
