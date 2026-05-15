@@ -2,14 +2,13 @@ import { User, MapPin, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth, useLogout } from "@/features/auth/auth.hooks";
-import { useGetUserProfile } from "../users.hooks";
+import { useAuth } from "@/features/auth/auth.hooks";
+import { useUser } from "../users.hooks";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
-  const { data: user } = useGetUserProfile();
-  const { mutate: logout } = useLogout();
+  const { isAuthenticated, logout } = useAuth();
+  const { getProfileData: user } = useUser();
 
   if (!isAuthenticated)
     return (
