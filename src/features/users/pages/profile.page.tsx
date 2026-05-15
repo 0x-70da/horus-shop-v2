@@ -4,11 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/features/auth/auth.hooks";
 import { useUser } from "../users.hooks";
+import { useAddresses } from "@/features/addresses/addresses.hooks";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
   const { isAuthenticated, logout } = useAuth();
   const { getProfileData: user } = useUser();
+  const { addresses } = useAddresses();
 
   if (!isAuthenticated)
     return (
@@ -51,14 +53,14 @@ const ProfilePage = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {/* {user?.addresses.map((addr) => (
+            {addresses?.map((addr) => (
               <div key={addr.id} className="border-b pb-2 mb-2 last:border-0">
-                <p className="font-medium">{addr.fullName}</p>
+                <p className="font-medium">{addr.full_name}</p>
                 <p className="text-sm text-muted-foreground">
-                  {addr.addressLine1}, {addr.city}, {addr.state} {addr.zipCode}
+                  {addr.address_line}, {addr.city}, {addr.state} {addr.zip_code}, {addr.country}
                 </p>
               </div>
-            ))} */}
+            ))}
           </CardContent>
         </Card>
       </div>
