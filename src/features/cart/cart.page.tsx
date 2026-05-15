@@ -7,8 +7,7 @@ import { Link } from "react-router-dom"
 import { useCart } from "./cart.hooks"
 
 const CartPage = () => {
-    const { items, subtotal } = useCart();
-    const {updateCartItem, removeFromCart} = useCart();
+    const {updateCartItem, removeFromCart, subtotal, items } = useCart();
     const shipping = subtotal > 100 ? 0 : 10;
     const tax = subtotal * 0.07;
     const finalTotal = subtotal + shipping + tax;

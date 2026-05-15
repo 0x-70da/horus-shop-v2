@@ -9,6 +9,7 @@ export const useProducts = (id?: string, filters?: ProductsFilter) => {
     const { data: productsData, isLoading: isProductsLoading, isError: isProductsError, error: productsError } = useQuery<ApiSuccess<ProductsResponse>, AxiosError<ApiError>>({
         queryKey: ['products', filters],
         queryFn: () => getProducts(filters),
+        enabled: !id,
         staleTime: 5 * 60 * 1000,
         gcTime: 10 * 60 * 1000,
         refetchOnWindowFocus: false,

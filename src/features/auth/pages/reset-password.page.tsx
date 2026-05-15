@@ -18,7 +18,7 @@ const ResetPasswordPage = () => {
   const urlToken = params.get("token") ?? undefined;
   const resetToken = (location.state as { resetToken?: string } | null)?.resetToken;
 
-  const { verify, isVerifyPending } = useAuth();
+  const { resetPassword, isResetPasswordPending, isResetPasswordError, resetPasswordErrorMessage, verify, isVerifyPending } = useAuth();
 
   useEffect(() => {
     if (urlToken) {
@@ -28,7 +28,6 @@ const ResetPasswordPage = () => {
     }
   }, []);
 
-  const { resetPassword, isResetPasswordPending, isResetPasswordError, resetPasswordErrorMessage } = useAuth();
 
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(ResetPasswordSchema),
