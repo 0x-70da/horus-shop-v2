@@ -1,11 +1,12 @@
 // features/orders/checkout.page.tsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useShippingMethods, useValidatePromoCode, useOrders } from "./orders.hooks";
 import { useAddresses } from "../addresses/addresses.hooks";
 import { useCart } from "../cart/cart.hooks";
 import type { PaymentMethod } from "./orders.types";
 import { toast } from "sonner";
+import { api } from "@/lib/api";
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
@@ -26,8 +27,13 @@ export default function CheckoutPage() {
   } | null>(null);
   const [promoError,       setPromoError]       = useState("");
   const [notes,            setNotes]            = useState("");
+  const [taxRate, setTaxRate] = useState(0.14);
 
-  // حساب الـ totals للعرض
+  useEffect(() => {
+    api.get("/tax?country=EG").then(({ data }) => {
+      if (data.success) setTaxRate(data.data.rate);
+    }).catch(() => {});
+  }, []);
   const selectedShippingMethod = shippingMethods?.find(m => m.id === selectedShipping);
   const discount   = promoResult?.discount ?? 0;
   const afterDiscount = subtotal - discount;
@@ -37,8 +43,7 @@ export default function CheckoutPage() {
     afterDiscount >= selectedShippingMethod.free_above
       ? 0
       : selectedShippingMethod?.base_cost ?? 0;
-  const TAX_RATE  = 0.14;
-  const tax       = parseFloat((afterDiscount * TAX_RATE).toFixed(2));
+  const tax       = parseFloat((afterDiscount * taxRate).toFixed(2));
   const total     = afterDiscount + shippingCost + tax;
 
   const handleApplyPromo = async () => {
@@ -47,8 +52,8 @@ export default function CheckoutPage() {
     setPromoResult(null);
 
     try {
-      const result = await validatePromo({ code: promoCode, orderTotal: subtotal });
-      setPromoResult({ discount: result.data?.discount, promoId: result.data?.promoId });
+      const result = await validatePromo({ code: promoCode, orderTotal: subtotal ?? 0 });
+      setPromoResult({ discount: result.data?.discount ?? 0, promoId: result.data?.promoId ?? '' });
       toast.success(`Promo applied! Discount: ${result.data?.discount} EGP`);
     } catch {
       setPromoError("Invalid or expired promo code");
@@ -305,7 +310,7 @@ export default function CheckoutPage() {
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Tax (14%)</span>
+                <span className="text-muted-foreground">Tax ({(taxRate * 100).toFixed(0)}%)</span>
                 <span>{tax} EGP</span>
               </div>
               <div className="flex justify-between font-bold text-base border-t pt-2">

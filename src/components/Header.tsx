@@ -60,7 +60,7 @@ const Header = () => {
   const wishlistItemsCount = wishlistItems.length;
   const cartItemsCount = useMemo(() => {
     return cartItems?.reduce((total: number, item: { quantity: number }) => total + item.quantity, 0);
-  }, [cartItems]);
+  }, [cartItems]) ?? 0;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">

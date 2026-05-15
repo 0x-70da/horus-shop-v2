@@ -19,7 +19,7 @@ const ProductDetailsPage = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
   const [quantity, setQuantity] = useState(1);
-  const { product, variants } = useProducts(id!);
+  const { product } = useProducts(id!);
   const { addToCart } = useCart();
   const { wishlistItems, addToWishlist, removeFromWishlist } = useWishlist();
   const isInWishlist = wishlistItems.some(item => item.productId === product?.id);
@@ -28,7 +28,7 @@ const ProductDetailsPage = () => {
       if (isInWishlist) {
         removeFromWishlist({ itemId: wishlistItems.find(item => item.productId === product?.id)?.id ?? '' });
       } else {
-        addToWishlist({ itemId: product?.id });
+        addToWishlist({ itemId: product?.id ?? '' });
       }
     };
 
@@ -360,15 +360,7 @@ const ProductDetailsPage = () => {
 
           <TabsContent value="specifications" className="mt-6">
             <div className="grid gap-4 sm:grid-cols-2">
-              {/* {product.specs.map((spec, index) => (
-                <div
-                  key={index}
-                  className="flex justify-between rounded-lg bg-muted/50 px-4 py-3"
-                >
-                  <span className="font-medium">{spec.name}</span>
-                  <span className="text-muted-foreground">{spec.value}</span>
-                </div>
-              ))} */}
+              <p className="text-muted-foreground col-span-2">Specifications coming soon.</p>
             </div>
           </TabsContent>
 
@@ -397,15 +389,6 @@ const ProductDetailsPage = () => {
                 </div>
 
                 <div className="space-y-2">
-                  {/* {ratingDistribution.map(({ stars, percent }) => (
-                    <div key={stars} className="flex items-center gap-2">
-                      <span className="w-8 text-sm">{stars}★</span>
-                      <Progress value={percent} className="flex-1" />
-                      <span className="w-10 text-right text-sm text-muted-foreground">
-                        {percent}%
-                      </span>
-                    </div>
-                  ))} */}
                 </div>
               </div>
 
@@ -421,16 +404,11 @@ const ProductDetailsPage = () => {
                         <div className="mb-3 flex items-start justify-between">
                           <div className="flex items-center gap-3">
                             <Avatar>
-                              {/* <AvatarImage src={review.userAvatar} /> */}
-                              <AvatarFallback>
-                                {/* {review.userName.charAt(0)} */}
-                              </AvatarFallback>
+                              <AvatarFallback>U</AvatarFallback>
                             </Avatar>
                             <div>
                               <div className="flex items-center gap-2">
-                                <span className="font-medium">
-                                  {/* {review.userName} */}
-                                </span>
+                                <span className="font-medium">User</span>
                                 {review.verified && (
                                   <Badge variant="secondary" className="gap-1">
                                     <Check className="h-3 w-3" />
@@ -481,13 +459,7 @@ const ProductDetailsPage = () => {
         </Tabs>
       </div>
 
-      {/* Related Products */}
-      {/* {relatedProducts.length > 0 && (
-        <section className="mt-16">
-          <h2 className="mb-6 text-2xl font-bold">Related Products</h2>
-          <ProductGrid products={relatedProducts} columns={4} />
-        </section>
-      )} */}
+
     </div>
   )
 }

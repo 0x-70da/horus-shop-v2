@@ -35,8 +35,8 @@ export default function OrderDetailPage() {
   );
 
   const currentStep     = STATUS_STEPS.findIndex(s => s.key === order.data?.status);
-  const canCancel       = ["pending", "confirmed"].includes(order.data?.status);
-  const isFinalStatus   = ["cancelled", "refunded"].includes(order.data?.status);
+  const canCancel       = ["pending", "confirmed"].includes(order.data?.status ?? '');
+  const isFinalStatus   = ["cancelled", "refunded"].includes(order.data?.status ?? '');
 
   return (
     <div className="container py-8 max-w-3xl">
@@ -56,7 +56,7 @@ export default function OrderDetailPage() {
           </Link>
           <h1 className="text-xl font-bold mt-1">#{order.data?.order_number}</h1>
           <p className="text-sm text-muted-foreground">
-            {new Date(order.data?.created_at).toLocaleDateString()}
+            {new Date(order.data?.created_at ?? '').toLocaleDateString()}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -139,7 +139,7 @@ export default function OrderDetailPage() {
                 <span className="text-muted-foreground">Subtotal</span>
                 <span>{order.data?.subtotal} EGP</span>
               </div>
-              {order.data?.discount > 0 && (
+              {(order.data?.discount ?? 0) > 0 && (
                 <div className="flex justify-between text-green-600">
                   <span>
                     Discount

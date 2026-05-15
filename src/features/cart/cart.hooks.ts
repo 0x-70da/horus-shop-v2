@@ -15,7 +15,7 @@ export const useCart = () => {
     const getCartErrorMessage = getErrorMessage(error);
     const getCartSuccessMessage = data?.message;
     const items = data?.data?.cartItems;
-    const subtotal = data?.data?.subtotal;
+    const subtotal = data?.data?.subtotal ?? 0;
     const itemCount = data?.data?.itemCount;
 
     const { mutate: addToCartMutate, data: addToCartData, isPending: isAddingToCart, isError: isAddingToCartError, error: addToCartError } = useMutation<ApiSuccess<CartItem>, AxiosError<ApiError>, { itemId: string; variantId: string | null; quantity: number } >({

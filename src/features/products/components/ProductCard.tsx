@@ -100,7 +100,7 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
                 size="sm"
                 onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                   e.preventDefault();
-                  addToCart({ itemId: product.id, quantity: 1 });
+                  addToCart({ itemId: product.id, variantId: null, quantity: 1 });
                 }}
                 disabled={product.stock === 0}
               >

@@ -39,8 +39,8 @@ export const useOrders = (id?: string, params?: { page?: number; limit?: number,
   });
 
   return {
-    orders: ordersResponse?.data.orders ?? [],
-    pagination: ordersResponse?.data.pagination,
+    orders: ordersResponse?.data?.orders ?? [],
+    pagination: ordersResponse?.data?.pagination,
     isOrdersLoading,
     isOrdersError,
     ordersError,
