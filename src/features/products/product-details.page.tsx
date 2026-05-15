@@ -21,8 +21,7 @@ const ProductDetailsPage = () => {
   const [quantity, setQuantity] = useState(1);
   const { product, variants } = useProducts(id!);
   const { addToCart } = useCart();
-  const { wishlistItems } = useWishlist();
-  const { addToWishlist, removeFromWishlist } = useWishlist();
+  const { wishlistItems, addToWishlist, removeFromWishlist } = useWishlist();
   const isInWishlist = wishlistItems.some(item => item.productId === product?.id);
   const handleToggleWishlist = (e: React.MouseEvent) => {
       e.preventDefault();
