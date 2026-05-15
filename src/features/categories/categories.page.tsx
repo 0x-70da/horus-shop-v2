@@ -24,7 +24,7 @@ const CategoriesPage = () => {
       limit: searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : 20,
     }
 
-    const { products, isLoading: isProductsLoading, isError: isProductsError, errorMessage: productsErrorMessage } = useProducts(filters);
+    const { products, isProductsLoading, isProductsError, productsErrorMessage } = useProducts("", filters);
 
     if (isCategoriesLoading) {
         return <div>Loading...</div>;

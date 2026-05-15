@@ -33,8 +33,8 @@ import { Badge } from "./ui/badge";
 import { useCategories } from "../features/categories/categories.hooks"
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
-import { useAuth, useLogout } from "@/features/auth/auth.hooks";
-import { useGetWishlistItems } from "@/features/wishlist/wishlist.hooks";
+import { useAuth } from "@/features/auth/auth.hooks";
+import { useWishlist } from "@/features/wishlist/wishlist.hooks";
 import { useCart } from "@/features/cart/cart.hooks";
 
 const categoryIcons: Record<string, React.ReactNode> = {
@@ -52,10 +52,9 @@ const categoryIcons: Record<string, React.ReactNode> = {
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { isAuthenticated, user } = useAuth();
-  const { mutate: logout } = useLogout();
+  const { isAuthenticated, user, logout } = useAuth();
   const { categories, isLoading, isError, errorMessage} = useCategories();
-  const { wishlistItems } = useGetWishlistItems();
+  const { wishlistItems } = useWishlist();
   const { items: cartItems } = useCart();
 
   const wishlistItemsCount = wishlistItems.length;
