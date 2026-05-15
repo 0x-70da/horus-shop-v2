@@ -17,7 +17,7 @@
     "@stripe/stripe-js": "^9.4.0",
     "@tailwindcss/vite": "^4.2.1",
     "@tanstack/react-query": "^5.90.21",
-    "axios": "^1.13.6",
+    "axios": "^1.15.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.35.2",
@@ -50,5 +50,14 @@
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.48.0",
     "vite": "^7.3.1"
+  },
+  "pnpm": {
+    "overrides": {
+      "hono": "4.12.18",
+      "fast-uri": "3.1.2",
+      "postcss": "8.5.10",
+      "follow-redirects": "1.16.0",
+      "ip-address": "10.1.1"
+    }
   }
 }
