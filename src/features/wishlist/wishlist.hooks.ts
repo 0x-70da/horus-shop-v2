@@ -6,20 +6,18 @@ import type { AxiosError } from "axios";
 import type { WishlistItem } from "./wishlist.types";
 import { toast } from "sonner";
 
-export const useGetWishlistItems = () => {
-    const { data, isLoading, isError, error } = useQuery<ApiSuccess<WishlistItem[]>, AxiosError<ApiError>>({
+export const useWishlist = () => {
+  const queryClient = useQueryClient();
+
+  const { data: wishlistItems, isLoading: isWishlistItemsLoading, isError: isWishlistItemsError, error: wishlistItemsError } = useQuery<ApiSuccess<WishlistItem[]>, AxiosError<ApiError>>({
         queryKey: ['wishlist'],
         queryFn: getWishlistItems,
     });
 
-    const errorMessage = getErrorMessage(error);
-    const successMessage = data?.message;
-    return { wishlistItems: data?.data ?? [], isLoading, isError, errorMessage, successMessage };
-}
+    const wishlistItemsErrorMessage = getErrorMessage(wishlistItemsError);
+    const wishlistItemsSuccessMessage = wishlistItems?.message;
 
-export const useAddToWishlist = () => {
-  const queryClient = useQueryClient();
-    const { mutate, data, isPending, isError, error } = useMutation<ApiSuccess<WishlistItem>, AxiosError<ApiError>, { itemId: string }>({
+    const { mutate: addToWishlistMutate, data: addToWishlistData, isPending: isAddToWishlistPending, isError: isAddToWishlistError, error: addToWishlistError } = useMutation<ApiSuccess<WishlistItem>, AxiosError<ApiError>, { itemId: string }>({
         mutationKey: ['wishlist', 'add'],
         mutationFn: ({ itemId }) => addToWishlist(itemId),
         onSuccess: () => {
@@ -28,14 +26,10 @@ export const useAddToWishlist = () => {
         }
     });
 
-    const errorMessage = getErrorMessage(error);
-    const successMessage = data?.message;
-    return { mutate, isPending, isError, errorMessage, successMessage };
-}
+    const addToWishlistErrorMessage = getErrorMessage(addToWishlistError);
+    const addToWishlistSuccessMessage = addToWishlistData?.message;
 
-export const useRemoveFromWishlist = () => {
-  const queryClient = useQueryClient();
-    const { mutate, data, isPending, isError, error } = useMutation<ApiSuccess<null>, AxiosError<ApiError>, { itemId: string }>({
+    const { mutate: removeFromWishlistMutate, data: removeFromWishlistData, isPending: isRemoveFromWishlistPending, isError: isRemoveFromWishlistError, error: removeFromWishlistError } = useMutation<ApiSuccess<null>, AxiosError<ApiError>, { itemId: string }>({
         mutationKey: ['wishlist', 'remove'],
         mutationFn: ({ itemId }) => removeFromWishlist(itemId),
         onSuccess: () => {
@@ -43,7 +37,23 @@ export const useRemoveFromWishlist = () => {
         }
     });
 
-    const errorMessage = getErrorMessage(error);
-    const successMessage = data?.message;
-    return { mutate, isPending, isError, errorMessage, successMessage };
+    const removeFromWishlistErrorMessage = getErrorMessage(removeFromWishlistError);
+    const removeFromWishlistSuccessMessage = removeFromWishlistData?.message;
+    return { 
+      wishlistItems: wishlistItems?.data ?? [],
+      isWishlistItemsLoading, 
+      isWishlistItemsError, 
+      wishlistItemsErrorMessage, 
+      wishlistItemsSuccessMessage,
+      addToWishlist: addToWishlistMutate,
+      isAddToWishlistPending,
+      isAddToWishlistError,
+      addToWishlistErrorMessage,
+      addToWishlistSuccessMessage,
+      removeFromWishlist: removeFromWishlistMutate,
+      isRemoveFromWishlistPending,
+      isRemoveFromWishlistError,
+      removeFromWishlistErrorMessage,
+      removeFromWishlistSuccessMessage,
+    };
 }

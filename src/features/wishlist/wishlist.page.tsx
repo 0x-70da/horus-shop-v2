@@ -1,14 +1,13 @@
 import { Heart, ShoppingCart, Trash2 } from "lucide-react";
-import { useGetWishlistItems, useRemoveFromWishlist } from "./wishlist.hooks";
+import { useWishlist } from "./wishlist.hooks";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { useAddToCart } from "../cart/cart.hooks";
+import { useCart } from "../cart/cart.hooks";
 
 const WishlistPage = () => {
-  const { wishlistItems } = useGetWishlistItems();
-  const {mutate: addToCart} = useAddToCart();
-  const {mutate: removeFromWishlist} = useRemoveFromWishlist();
+  const { wishlistItems, removeFromWishlist } = useWishlist();
+  const { addToCart } = useCart();
 
   if (!wishlistItems.length) {
     return (
@@ -30,7 +29,7 @@ const WishlistPage = () => {
       <h1 className="mb-8 text-3xl font-bold">Wishlist ({wishlistItems.length})</h1>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {wishlistItems.map((item) => (
-          <Card key={item.product_id} className="overflow-hidden">
+          <Card key={item.productId} className="overflow-hidden">
             <div className="aspect-square overflow-hidden">
               <img
                 src={item.images[0]}
@@ -40,7 +39,7 @@ const WishlistPage = () => {
             </div>
             <CardContent className="p-4">
               <Link
-                to={`/product/${item.product_id}`}
+                to={`/products/${item.productId}`}
                 className="font-semibold hover:text-primary line-clamp-2"
               >
                 {item.name}
@@ -52,7 +51,7 @@ const WishlistPage = () => {
                 <Button
                   size="sm"
                   className="flex-1 gap-1"
-                  onClick={() => addToCart({ itemId: item.product_id, quantity: 1 })}
+                  onClick={() => addToCart({ itemId: item.productId, variantId: null, quantity: 1 })}
                 >
                   <ShoppingCart className="h-4 w-4" />
                   Add to Cart

@@ -6,10 +6,10 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Link } from "react-router-dom"
 import { ForgotPasswordSchema, type ForgotPasswordFormData } from "../auth.schema"
-import { useForgotPassword } from "../auth.hooks"
+import { useAuth } from "../auth.hooks"
 
 const ForgotPasswordPage = () => {
-    const { mutate: forgotPassword, isError, errorMessage, isPending } = useForgotPassword();
+    const { forgotPassword, isForgotPasswordError, forgotPasswordErrorMessage, isForgotPasswordPending } = useAuth();
     const { handleSubmit, register, formState: { errors } } = useForm({
       resolver: zodResolver(ForgotPasswordSchema),
       defaultValues: {
@@ -39,7 +39,7 @@ const ForgotPasswordPage = () => {
                       <FieldError>{errors.email.message}</FieldError>
                     )}
                   </Field>
-              {isError && <p className="text-sm text-red-500">{errorMessage}</p>}
+              {isForgotPasswordError && <p className="text-sm text-red-500">{forgotPasswordErrorMessage}</p>}
               <div className="flex justify-end">
                 <Link
                   to="/login"
@@ -48,7 +48,7 @@ const ForgotPasswordPage = () => {
                   Back to login
                 </Link>
               </div>
-              <Button type="submit" className="w-full" disabled={isPending}>
+              <Button type="submit" className="w-full" disabled={isForgotPasswordPending}>
                 Reset Password
               </Button>
             </form>

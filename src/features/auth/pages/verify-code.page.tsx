@@ -6,10 +6,10 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Link } from "react-router-dom"
 import { verifyCodeOrResetTokenSchema, type VerifyCodeOrResetTokenFormData } from "../auth.schema"
-import { useVerify } from "../auth.hooks"
+import { useAuth } from "../auth.hooks"
 
 const VerifyCodePage = () => {
-  const { mutate: verifyCode, isPending, isError, errorMessage } = useVerify();
+  const { verify, isVerifyPending, isVerifyError, verifyErrorMessage } = useAuth();
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(verifyCodeOrResetTokenSchema),
     defaultValues: {
@@ -17,7 +17,7 @@ const VerifyCodePage = () => {
     }
   });
   const onSubmit = (data: VerifyCodeOrResetTokenFormData) => {
-    verifyCode({ code: data.code });
+    verify({ code: data.code });
   }
   return (
     <div className="container flex min-h-[80vh] items-center justify-center py-8">
@@ -41,8 +41,8 @@ const VerifyCodePage = () => {
                       <FieldError>{errors.code.message}</FieldError>
                     )}
                   </Field>
-                  {isError && <p className="text-sm text-red-500">{errorMessage}</p>}
-              <Button type="submit" className="w-full" disabled={isPending}>
+                  {isVerifyError && <p className="text-sm text-red-500">{verifyErrorMessage}</p>}
+              <Button type="submit" className="w-full" disabled={isVerifyPending}>
                 Verify
               </Button>
                 <Link

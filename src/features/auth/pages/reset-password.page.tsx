@@ -4,7 +4,7 @@ import { Field, FieldError, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { useEffect } from "react"
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom"
-import { useResetPassword, useVerify } from "../auth.hooks"
+import { useAuth } from "../auth.hooks"
 import { useForm } from "react-hook-form"
 import { ResetPasswordSchema, type ResetPasswordFormData } from "../auth.schema"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -18,7 +18,7 @@ const ResetPasswordPage = () => {
   const urlToken = params.get("token") ?? undefined;
   const resetToken = (location.state as { resetToken?: string } | null)?.resetToken;
 
-  const { mutate: verify, isPending: isVerifying} = useVerify();
+  const { resetPassword, isResetPasswordPending, isResetPasswordError, resetPasswordErrorMessage, verify, isVerifyPending } = useAuth();
 
   useEffect(() => {
     if (urlToken) {
@@ -28,7 +28,6 @@ const ResetPasswordPage = () => {
     }
   }, []);
 
-  const { mutate: resetPassword, isPending, isError, errorMessage } = useResetPassword();
 
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(ResetPasswordSchema),
@@ -39,7 +38,7 @@ const ResetPasswordPage = () => {
     resetPassword({ resetToken, newPassword: data.newPassword, confirmNewPassword: data.confirmNewPassword });
   }
 
-  if (isVerifying) {
+  if (isVerifyPending) {
     return (
       <div className="container flex min-h-[80vh] items-center justify-center py-8">
         <Card className="w-full max-w-md">
@@ -85,7 +84,7 @@ const ResetPasswordPage = () => {
                       <FieldError>{errors.confirmNewPassword.message}</FieldError>
                     )}
                   </Field>
-              {isError && <p className="text-sm text-red-500">{errorMessage}</p>}
+              {isResetPasswordError && <p className="text-sm text-red-500">{resetPasswordErrorMessage}</p>}
               <div className="flex justify-end">
                 <Link
                   to="/login"
@@ -94,7 +93,7 @@ const ResetPasswordPage = () => {
                   Back to Login
                 </Link>
               </div>
-              <Button type="submit" className="w-full" disabled={isPending}>
+              <Button type="submit" className="w-full" disabled={isResetPasswordPending}>
                 Reset Password
               </Button>
             </form>

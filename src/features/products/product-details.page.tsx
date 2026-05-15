@@ -6,29 +6,27 @@ import { cn } from "@/lib/utils"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { useProductDetails } from "./products.hooks"
+import { useProducts } from "./products.hooks"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { useState } from "react"
 import type { ProductVariant } from "./products.types"
-import { useAddToCart } from "../cart/cart.hooks"
-import { useAddToWishlist, useGetWishlistItems, useRemoveFromWishlist } from "../wishlist/wishlist.hooks"
+import { useCart } from "../cart/cart.hooks"
+import { useWishlist } from "../wishlist/wishlist.hooks"
 
 const ProductDetailsPage = () => {
   const { id } = useParams<{id: string}>();
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
   const [quantity, setQuantity] = useState(1);
-  const { product, variants } = useProductDetails(id!);
-  const { mutate: addToCart } = useAddToCart();
-  const { wishlistItems } = useGetWishlistItems();
-  const { mutate: addToWishlist } = useAddToWishlist();
-  const { mutate: removeFromWishlist } = useRemoveFromWishlist();
-  const isInWishlist = wishlistItems.some(item => item.product_id === product?.id);
+  const { product, variants } = useProducts(id!);
+  const { addToCart } = useCart();
+  const { wishlistItems, addToWishlist, removeFromWishlist } = useWishlist();
+  const isInWishlist = wishlistItems.some(item => item.productId === product?.id);
   const handleToggleWishlist = (e: React.MouseEvent) => {
       e.preventDefault();
       if (isInWishlist) {
-        removeFromWishlist({ itemId: wishlistItems.find(item => item.product_id === product?.id)?.id ?? '' });
+        removeFromWishlist({ itemId: wishlistItems.find(item => item.productId === product?.id)?.id ?? '' });
       } else {
         addToWishlist({ itemId: product?.id });
       }

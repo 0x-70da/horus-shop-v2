@@ -1,9 +1,9 @@
 export interface WishlistItem {
     id: string;
-    product_id: string;
+    productId: string;
     name: string;
     price: number;
     slug: string
     images: string[];
-    created_at: string;
+    createdAt: string;
 }

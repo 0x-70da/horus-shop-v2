@@ -6,13 +6,13 @@ import { Eye, EyeOff } from "lucide-react"
 import { Field, FieldContent, FieldError, FieldLabel } from "@/components/ui/field"
 import { Link } from "react-router-dom"
 import { useState } from "react"
-import { useLogin } from "../auth.hooks"
+import { useAuth } from "../auth.hooks"
 import { LoginSchema, type LoginFormData } from "../auth.schema"
 import { zodResolver } from "@hookform/resolvers/zod"
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const { mutate: login, isPending, isError, errorMessage } = useLogin();
+  const { login, isLoginPending, isLoginError, loginErrorMessage } = useAuth();
   const { handleSubmit, register, formState: { errors } } = useForm({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
@@ -68,7 +68,7 @@ const LoginPage = () => {
                         <FieldError>{errors.password.message}</FieldError>
                       )}
                   </Field>
-              {isError && <p className="text-sm text-red-500">{errorMessage}</p>}
+              {isLoginError && <p className="text-sm text-red-500">{loginErrorMessage}</p>}
               <div className="flex justify-end">
                 <Link
                   to="/forgot-password"
@@ -77,7 +77,7 @@ const LoginPage = () => {
                   Forgot password?
                 </Link>
               </div>
-              <Button type="submit" className="w-full" disabled={isPending}>
+              <Button type="submit" className="w-full" disabled={isLoginPending}>
                 Sign In
               </Button>
             </form>

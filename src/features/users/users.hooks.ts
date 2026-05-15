@@ -3,21 +3,37 @@ import { getUserProfile, updateUserProfile } from "./users.api";
 import type { ApiError, ApiSuccess } from "@/types/api.types";
 import type { User } from "./users.types";
 import type { AxiosError } from "axios";
+import { getErrorMessage } from "@/lib/get-error-message";
 
-export const useGetUserProfile = () => {
-  const { data, error, isLoading } = useQuery<ApiSuccess<User>>({
+export const useUser = () => {
+  const { data: getProfileData, isError: isGetProfileError, error: getProfileError, isLoading: isGetProfileLoading } = useQuery<ApiSuccess<User>, AxiosError<ApiError>>({
     queryKey: ['user', 'profile'],
     queryFn: getUserProfile,
   });
 
-  return { data: data?.data, error, isLoading };
-}
+  const getProfileErrorMessage = getErrorMessage(getProfileError);
+  const getProfileSuccessMessage = getProfileData?.message;
 
-export const useUpdateUserProfile = () => {
-  const { mutate, data, error, isPending } = useMutation<ApiSuccess<User>, AxiosError<ApiError>, Partial<User>>({
+  const { mutate: updateProfileMutate, data: updateProfileData, error: updateProfileError, isPending: isUpdateProfilePending } = useMutation<ApiSuccess<User>, AxiosError<ApiError>, Partial<User>>({
     mutationKey: ['user', 'updateProfile'],
     mutationFn: (profileData: Partial<User>) => updateUserProfile(profileData),
   });
 
-  return { mutate, data: data?.data, error, isPending };
-}
+  const updateProfileErrorMessage = getErrorMessage(updateProfileError);
+  const updateProfileSuccessMessage = updateProfileData?.message;
+
+  return { 
+    getProfileData: getProfileData?.data, 
+    getProfileError, 
+    isGetProfileLoading,
+    isGetProfileError,
+    getProfileErrorMessage,
+    getProfileSuccessMessage,
+    updateProfile: updateProfileMutate,
+    updateProfileData: updateProfileData?.data,
+    updateProfileError,
+    isUpdateProfilePending,
+    updateProfileErrorMessage,
+    updateProfileSuccessMessage,
+   };
+  };

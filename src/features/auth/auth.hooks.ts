@@ -8,119 +8,123 @@ import type { AxiosError } from "axios"
 import { getErrorMessage } from "@/lib/get-error-message"
 import { toast } from "sonner"
 
-export const useRegister = () => {
-    const navigate = useNavigate();
-    const { mutate, data, isPending, isError, error } = useMutation<ApiSuccess, AxiosError<ApiError>, RegisterFormData>({
-        mutationKey: ["auth", "register"],
-        mutationFn: register,
-        onSuccess: () => {
-            toast.success("Registration successful! Please log in.");
-            navigate("/login");
-        }
-    });
-    const errorMessage = getErrorMessage(error);
-    const successMessage = data?.message;
-    return { mutate, isPending, isError, errorMessage, successMessage };
-}
-
-export const useLogin = () => {
-    const queryClient = useQueryClient();
-    const navigate = useNavigate();
-    const location = useLocation();
-
-    const redirectTo = (location.state?.from?.pathname as string) ?? "/";
-
-    const { mutate, data, isPending, isError, error } = useMutation<ApiSuccess<AuthUser>, AxiosError<ApiError>, LoginFormData>({
-        mutationKey: ["auth", "login"],
-        mutationFn: login,
-        onSuccess: (response) => {
-            if(!response.success) return;
-            queryClient.invalidateQueries({ queryKey: ["auth", "user"] });
-            toast.success("Login successful!");
-            navigate(redirectTo, { replace: true });
-        },
-    });
-    const errorMessage = getErrorMessage(error);
-    const successMessage = data?.message;
-    return { mutate, isPending, isError, errorMessage, successMessage };
-}
-
-export const useForgotPassword = () => {
-  const navigate = useNavigate();
-  const { mutate, data, isPending, isError, error } = useMutation<ApiSuccess, AxiosError<ApiError>, ForgotPasswordFormData>({
-      mutationKey: ["auth", "forgotPassword"],
-      mutationFn: forgotPassword,
-      onSuccess: (response) => {
-          if(!response.success) return;
-          toast.success(response.message);
-          navigate("/verify-code");
-      }
-  });
-  const errorMessage = getErrorMessage(error);
-  const successMessage = data?.message;
-  return { mutate, isPending, isError, errorMessage, successMessage };
-}
-
-export const useVerify = () => {
-  const navigate = useNavigate();
-  const { mutate, data, isPending, isError, error } = useMutation<ApiSuccess<{resetToken: string}>, AxiosError<ApiError>, { code?: string; token?: string}>({
-      mutationKey: ["auth", "verify"],
-      mutationFn: verifyCodeOrResetToken,
-      onSuccess: (response) => {
-          if(!response.success) return;
-          toast.success(response.message);
-          navigate("/reset-password", { state: { resetToken: response.data?.resetToken } });
-      }
-  });
-  const errorMessage = getErrorMessage(error);
-  const successMessage = data?.message;
-  return { mutate, isPending, isError, errorMessage, successMessage };
-}
-
-export const useResetPassword = () => {
-  const navigate = useNavigate();
-  const { mutate, data, isPending, isError, error } = useMutation<ApiSuccess, AxiosError<ApiError>, ResetPasswordRequest>({
-      mutationKey: ["auth", "resetPassword"],
-      mutationFn: resetPassword,
-      onSuccess: (response) => {
-          if(!response.success) return;
-          toast.success(response.message);
-          navigate("/login");
-      }
-  });
-  const errorMessage = getErrorMessage(error);
-  const successMessage = data?.message;
-  return { mutate, isPending, isError, errorMessage, successMessage };
-}
-
 export const useAuth = () => {
-    const { data } = useQuery<ApiSuccess<AuthUser>, AxiosError<ApiError>>({
-        queryKey: ["auth", "user"],
-        queryFn: getMe,
-        retry: false,
-        staleTime: Infinity,
-        gcTime: Infinity,
-    });
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const redirectTo = (location.state?.from?.pathname as string) ?? "/";
 
-    return {
-        user: data?.data ?? null,
-        isAuthenticated: !!data?.data || false,
+  const { mutate: registerMutate, data: registerData, isPending: isRegisterPending, isError: isRegisterError, error: registerError } = useMutation<ApiSuccess, AxiosError<ApiError>, RegisterFormData>({
+    mutationKey: ["auth", "register"],
+    mutationFn: register,
+    onSuccess: () => {
+      toast.success("Registration successful! Please log in.");
+      navigate("/login");
     }
-}
+  });
+  const registerErrorMessage = getErrorMessage(registerError);
+  const registerSuccessMessage = registerData?.message;
 
-export const useLogout = () => {
-    const queryClient = useQueryClient();
-    const navigate = useNavigate();
+  const { mutate: loginMutate, data: loginData, isPending: isLoginPending, isError: isLoginError, error: loginError } = useMutation<ApiSuccess<AuthUser>, AxiosError<ApiError>, LoginFormData>({
+    mutationKey: ["auth", "login"],
+    mutationFn: login,
+    onSuccess: (response) => {
+      if(!response.success) return;
+      queryClient.invalidateQueries({ queryKey: ["auth", "user"] });
+      toast.success("Login successful!");
+      navigate(redirectTo, { replace: true });
+    },
+  });
+  const loginErrorMessage = getErrorMessage(loginError);
+  const loginSuccessMessage = loginData?.message;
 
-    const { mutate, data, isPending, isError, error } = useMutation<ApiResponse, AxiosError<ApiError>, void>({
-        mutationKey: ["auth", "logout"],
-        mutationFn: logout,
-        onSuccess: () => {
-            queryClient.removeQueries({ queryKey: ["auth", "user"] });
-            navigate("/login");
-        },
-    });
-    const errorMessage = getErrorMessage(error);
-    const successMessage = data?.message;
-    return { mutate, isPending, isError, errorMessage, successMessage };
+  const { mutate: forgotPasswordMutate, data: forgotPasswordData, isPending: isForgotPasswordPending, isError: isForgotPasswordError, error: forgotPasswordError } = useMutation<ApiSuccess, AxiosError<ApiError>, ForgotPasswordFormData>({
+    mutationKey: ["auth", "forgotPassword"],
+    mutationFn: forgotPassword,
+    onSuccess: (response) => {
+      if(!response.success) return;
+      toast.success(response.message);
+      navigate("/verify-code");
+    }
+  });
+  const forgotPasswordErrorMessage = getErrorMessage(forgotPasswordError);
+  const forgotPasswordSuccessMessage = forgotPasswordData?.message;
+
+  const { mutate: verifyMutate, data: verifyData, isPending: isVerifyPending, isError: isVerifyError, error: verifyError } = useMutation<ApiSuccess<{resetToken: string}>, AxiosError<ApiError>, { code?: string; token?: string}>({
+    mutationKey: ["auth", "verify"],
+    mutationFn: verifyCodeOrResetToken,
+    onSuccess: (response) => {
+      if(!response.success) return;
+      toast.success(response.message);
+      navigate("/reset-password", { state: { resetToken: response.data?.resetToken } });
+    }
+  });
+  const verifyErrorMessage = getErrorMessage(verifyError);
+  const verifySuccessMessage = verifyData?.message;
+
+  const { mutate: resetPasswordMutate, data: resetPasswordData, isPending: isResetPasswordPending, isError: isResetPasswordError, error: resetPasswordError } = useMutation<ApiSuccess, AxiosError<ApiError>, ResetPasswordRequest>({
+    mutationKey: ["auth", "resetPassword"],
+    mutationFn: resetPassword,
+    onSuccess: (response) => {
+      if(!response.success) return;
+      toast.success(response.message);
+      navigate("/login");
+    }
+  });
+  const resetPasswordErrorMessage = getErrorMessage(resetPasswordError);
+  const resetPasswordSuccessMessage = resetPasswordData?.message;
+
+  const { data: userData } = useQuery<ApiSuccess<AuthUser>, AxiosError<ApiError>>({
+    queryKey: ["auth", "user"],
+    queryFn: getMe,
+    retry: false,
+    staleTime: Infinity,
+    gcTime: Infinity,
+  });
+
+  const { mutate: logoutMutate, data: logoutData, isPending: isLogoutPending, isError: isLogoutError, error: logoutError } = useMutation<ApiResponse, AxiosError<ApiError>, void>({
+    mutationKey: ["auth", "logout"],
+    mutationFn: logout,
+    onSuccess: () => {
+      queryClient.removeQueries({ queryKey: ["auth", "user"] });
+      navigate("/login");
+    },
+  });
+  const errorMessage = getErrorMessage(logoutError);
+  const successMessage = logoutData?.message;
+
+  return { 
+    registerUser: registerMutate, 
+    isRegisterPending, 
+    isRegisterError, 
+    registerErrorMessage, 
+    registerSuccessMessage,
+    login: loginMutate,
+    isLoginPending,
+    isLoginError,
+    loginErrorMessage,
+    loginSuccessMessage,
+    forgotPassword: forgotPasswordMutate,
+    isForgotPasswordPending,
+    isForgotPasswordError,
+    forgotPasswordErrorMessage,
+    forgotPasswordSuccessMessage,
+    verify: verifyMutate,
+    isVerifyPending,
+    isVerifyError,
+    verifyErrorMessage,
+    verifySuccessMessage,
+    resetPassword: resetPasswordMutate,
+    isResetPasswordPending,
+    isResetPasswordError,
+    resetPasswordErrorMessage,
+    resetPasswordSuccessMessage,
+    user: userData?.data ?? null,
+    isAuthenticated: !!userData?.data || false,
+    logout: logoutMutate,
+    isLogoutPending,
+    isLogoutError,
+    logoutErrorMessage: errorMessage,
+    logoutSuccessMessage: successMessage,
+  };
 }

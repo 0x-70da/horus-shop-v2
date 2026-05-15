@@ -7,38 +7,33 @@ import { getErrorMessage } from "@/lib/get-error-message"
 import { toast } from "sonner"
 
 export const useCart = () => {
-    const { data, isLoading, isError, error } = useQuery<ApiSuccess<CartResponse>, AxiosError<ApiError>>({
-        queryKey: ['cart'],
-        queryFn: getCartItems,
+  const queryClient = useQueryClient();
+  const { data, isLoading, isError, error } = useQuery<ApiSuccess<CartResponse>, AxiosError<ApiError>>({
+      queryKey: ['cart'],
+      queryFn: getCartItems,
     });
-    const errorMessage = getErrorMessage(error);
-    const successMessage = data?.message;
+    const getCartErrorMessage = getErrorMessage(error);
+    const getCartSuccessMessage = data?.message;
     const items = data?.data?.cartItems;
     const subtotal = data?.data?.subtotal;
     const itemCount = data?.data?.itemCount;
-    return { items, isLoading, isError, errorMessage, successMessage, subtotal, itemCount };
-}
 
-export const useAddToCart = () => {
-  const queryClient = useQueryClient();
-    const { mutate, data, isPending, isError, error } = useMutation<ApiSuccess<CartItem>, AxiosError<ApiError>, { itemId: string; variantId: string | null; quantity: number }>({
+    const { mutate: addToCartMutate, data: addToCartData, isPending: isAddingToCart, isError: isAddingToCartError, error: addToCartError } = useMutation<ApiSuccess<CartItem>, AxiosError<ApiError>, { itemId: string; variantId: string | null; quantity: number } >({
         mutationKey: ['cart', 'add'],
         mutationFn: ({ itemId, variantId = null, quantity }) => addToCart(itemId, variantId, quantity),
         onSuccess: () => {
           toast.success("Item added to cart!");
           queryClient.invalidateQueries({ queryKey: ['cart'] });
+        },
+        onError: () => {
+          toast.error("Failed to add item to cart. Please try again.");
         }
     });
 
-    const errorMessage = getErrorMessage(error);
-    const successMessage = data?.message;
+    const addToCartErrorMessage = getErrorMessage(addToCartError);
+    const addToCartSuccessMessage = addToCartData?.message;
 
-    return { mutate, isPending, isError, errorMessage, successMessage };
-}
-
-export const useUpdateCartItem = () => {
-  const queryClient = useQueryClient();
-    const { mutate, data, isPending, isError, error } = useMutation<ApiSuccess<CartItem | undefined>, AxiosError<ApiError>, { itemId: string; quantity: number }>({
+    const { mutate: updateCartItemMutate, data: updateCartItemData, isPending: isUpdatingCartItem, isError: isUpdatingCartItemError, error: updateCartItemError } = useMutation<ApiSuccess<CartItem | undefined>, AxiosError<ApiError>, { itemId: string; quantity: number }>({
         mutationKey: ['cart', 'update'],
         mutationFn: ({ itemId, quantity }) => updateCartItem(itemId, quantity),
         onSuccess: () => {
@@ -46,15 +41,10 @@ export const useUpdateCartItem = () => {
         }
     });
 
-    const errorMessage = getErrorMessage(error);
-    const successMessage = data?.message;
+    const updateCartItemErrorMessage = getErrorMessage(updateCartItemError);
+    const updateCartItemSuccessMessage = updateCartItemData?.message;
 
-    return { mutate, isPending, isError, errorMessage, successMessage };
-}
-
-export const useRemoveFromCart = () => {
-  const queryClient = useQueryClient();
-    const { mutate, data, isPending, isError, error } = useMutation<ApiSuccess, AxiosError<ApiError>, { itemId: string }>({
+    const { mutate: removeFromCartMutate, data: removeFromCartData, isPending: isRemovingFromCart, isError: isRemovingFromCartError, error: removeFromCartError } = useMutation<ApiSuccess, AxiosError<ApiError>, { itemId: string }>({
         mutationKey: ['cart', 'remove'],
         mutationFn: ({ itemId }) => removeFromCart(itemId),
         onSuccess: () => {
@@ -62,15 +52,10 @@ export const useRemoveFromCart = () => {
         }
     });
 
-    const errorMessage = getErrorMessage(error);
-    const successMessage = data?.message;
+    const removeFromCartErrorMessage = getErrorMessage(removeFromCartError);
+    const removeFromCartSuccessMessage = removeFromCartData?.message;
 
-    return { mutate, isPending, isError, errorMessage, successMessage };
-}
-
-export const useClearCart = () => {
-  const queryClient = useQueryClient();
-    const { mutate, data, isPending, isError, error } = useMutation<ApiSuccess, AxiosError<ApiError>>({
+     const { mutate: clearCartMutate, data: clearCartData, isPending: isClearingCart, isError: isClearingCartError, error: clearCartError } = useMutation<ApiSuccess, AxiosError<ApiError>>({
         mutationKey: ['cart', 'clear'],
         mutationFn: clearCart,
         onSuccess: () => {
@@ -78,8 +63,36 @@ export const useClearCart = () => {
         }
     });
 
-    const errorMessage = getErrorMessage(error);
-    const successMessage = data?.message;
-    
-    return { mutate, isPending, isError, errorMessage, successMessage };
+    const clearCartErrorMessage = getErrorMessage(clearCartError);
+    const clearCartSuccessMessage = clearCartData?.message;
+
+    return { 
+      items,
+      isLoading, 
+      isError, 
+      getCartErrorMessage, 
+      getCartSuccessMessage, 
+      subtotal, 
+      itemCount,
+      addToCart: addToCartMutate,
+      isAddingToCart,
+      isAddingToCartError,
+      addToCartErrorMessage,
+      addToCartSuccessMessage,
+      updateCartItem: updateCartItemMutate,
+      isUpdatingCartItem,
+      isUpdatingCartItemError,
+      updateCartItemErrorMessage,
+      updateCartItemSuccessMessage,
+      removeFromCart: removeFromCartMutate,
+      isRemovingFromCart,
+      isRemovingFromCartError,
+      removeFromCartErrorMessage,
+      removeFromCartSuccessMessage,
+      clearCart: clearCartMutate,
+      isClearingCart,
+      isClearingCartError,
+      clearCartErrorMessage,
+      clearCartSuccessMessage,
+    };
 }
