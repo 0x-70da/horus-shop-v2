@@ -6,8 +6,8 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Heart, ShoppingCart, Star } from "lucide-react";
-import { useAddToCart } from "@/features/cart/cart.hooks";
-import { useAddToWishlist, useGetWishlistItems, useRemoveFromWishlist } from "@/features/wishlist/wishlist.hooks";
+import { useCart } from "@/features/cart/cart.hooks";
+import { useWishlist } from "@/features/wishlist/wishlist.hooks";
 
 interface ProductCardProps {
   product: Product;
@@ -15,16 +15,14 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ product, className }: ProductCardProps) => {
-    const { mutate: addToCart } = useAddToCart();
-    const { wishlistItems } = useGetWishlistItems();
-    const { mutate: addToWishlist } = useAddToWishlist();
-    const { mutate: removeFromWishlist } = useRemoveFromWishlist();
+    const { addToCart } = useCart();
+    const { wishlistItems, removeFromWishlist, addToWishlist } = useWishlist();
 
-    const isInWishlist = wishlistItems.some(item => item.product_id === product.id);
+    const isInWishlist = wishlistItems.some(item => item.productId === product.id);
     const handleToggleWishlist = (e: React.MouseEvent) => {
       e.preventDefault();
       if (isInWishlist) {
-        removeFromWishlist({ itemId: wishlistItems.find(item => item.product_id === product.id)?.id ?? '' });
+        removeFromWishlist({ itemId: wishlistItems.find(item => item.productId === product.id)?.id ?? '' });
       } else {
         addToWishlist({ itemId: product.id });
       }

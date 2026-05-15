@@ -30,7 +30,7 @@ const ProductsPage = () => {
         limit: searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : 20,
       }
   
-      const { products } = useProducts(filters);
+      const { products } = useProducts("", filters);
       const { categories } = useCategories();
       const { brands } = useBrands();
 
