@@ -14,11 +14,11 @@ import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { RegisterSchema, type RegisterFormData } from "../auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRegister } from "../auth.hooks";
+import { useAuth } from "../auth.hooks";
 
 const RegisterPage = () => {
     const [showPassword, setShowPassword] = useState(false);
-    const { mutate: registerUser, isPending, isError, errorMessage } = useRegister();
+    const { registerUser, isRegisterPending, isRegisterError, registerErrorMessage } = useAuth();
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: zodResolver(RegisterSchema),
         defaultValues: { firstName: "", lastName: "", email: "", password: "" },
@@ -74,8 +74,8 @@ const RegisterPage = () => {
                 </Button>
               </div>
               <FieldError>{errors.password?.message}</FieldError>
-            {isError && <p className="text-sm text-red-500">{errorMessage}</p>}
-              <Button type="submit" disabled={isPending} className="w-full">
+            {isRegisterError && <p className="text-sm text-red-500">{registerErrorMessage}</p>}
+              <Button type="submit" disabled={isRegisterPending} className="w-full">
                 Create Account
               </Button>
             </Field>
