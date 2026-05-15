@@ -4,12 +4,11 @@ import { Separator } from "@/components/ui/separator"
 import { motion } from "framer-motion"
 import { ArrowRight, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react"
 import { Link } from "react-router-dom"
-import { useCart, useRemoveFromCart, useUpdateCartItem } from "./cart.hooks"
+import { useCart } from "./cart.hooks"
 
 const CartPage = () => {
     const { items, subtotal } = useCart();
-    const { mutate: updateQuantity } = useUpdateCartItem();
-    const { mutate: removeFromCart } = useRemoveFromCart();
+    const {updateCartItem, removeFromCart} = useCart();
     const shipping = subtotal > 100 ? 0 : 10;
     const tax = subtotal * 0.07;
     const finalTotal = subtotal + shipping + tax;
@@ -71,7 +70,7 @@ const CartPage = () => {
                     size="icon"
                     className="h-8 w-8"
                     onClick={() =>
-                      updateQuantity({
+                      updateCartItem({
                         itemId: item.id, quantity: item.quantity - 1
                       })
                     }
@@ -84,7 +83,7 @@ const CartPage = () => {
                     size="icon"
                     className="h-8 w-8"
                     onClick={() => 
-                      updateQuantity({
+                      updateCartItem({
                         itemId: item.id, quantity: item.quantity + 1
                       })
                     }
