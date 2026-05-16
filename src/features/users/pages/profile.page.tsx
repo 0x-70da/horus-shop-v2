@@ -57,7 +57,8 @@ const ProfilePage = () => {
               <div key={addr.id} className="border-b pb-2 mb-2 last:border-0">
                 <p className="font-medium">{addr.full_name}</p>
                 <p className="text-sm text-muted-foreground">
-                  {addr.address_line}, {addr.city}, {addr.state} {addr.zip_code}, {addr.country}
+                  {addr.address_line}, {addr.city}, {addr.state} {addr.zip_code}
+                  , {addr.country}
                 </p>
               </div>
             ))}

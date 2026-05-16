@@ -6,10 +6,16 @@ import type { Address, CreateAddressBody } from "./addresses.types";
 
 export default function AddressesPage() {
   const { addresses, isAddressesLoading } = useAddresses();
-  const { createAddress, deleteAddress, setDefaultAddress, isCreatingAddress, isDeletingAddress } = useAddresses();
+  const {
+    createAddress,
+    deleteAddress,
+    setDefaultAddress,
+    isCreatingAddress,
+    isDeletingAddress,
+  } = useAddresses();
 
-  const [showForm,     setShowForm]     = useState(false);
-  const [editingAddr,  setEditingAddr]  = useState<Address | null>(null);
+  const [showForm, setShowForm] = useState(false);
+  const [editingAddr, setEditingAddr] = useState<Address | null>(null);
 
   const handleCreate = (data: CreateAddressBody) => {
     createAddress(data, { onSuccess: () => setShowForm(false) });
@@ -61,9 +67,8 @@ export default function AddressesPage() {
 
       {/* Addresses List */}
       <div className="space-y-4">
-        {addresses.map(addr => (
+        {addresses.map((addr) => (
           <div key={addr.id} className="border rounded-lg p-4">
-
             {/* Edit Form inline */}
             {editingAddr?.id === addr.id ? (
               <EditAddressInline
@@ -82,13 +87,18 @@ export default function AddressesPage() {
                         </span>
                       )}
                     </div>
-                    <p className="text-sm text-muted-foreground">{addr.address_line}</p>
                     <p className="text-sm text-muted-foreground">
-                      {addr.city}{addr.state && `, ${addr.state}`}, {addr.country}
+                      {addr.address_line}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {addr.city}
+                      {addr.state && `, ${addr.state}`}, {addr.country}
                       {addr.zip_code && ` ${addr.zip_code}`}
                     </p>
                     {addr.phone && (
-                      <p className="text-sm text-muted-foreground">{addr.phone}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {addr.phone}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -131,7 +141,7 @@ function EditAddressInline({
   onDone,
 }: {
   address: Address;
-  onDone:  () => void;
+  onDone: () => void;
 }) {
   const { updateAddress, isUpdatingAddress } = useAddresses(address.id);
 

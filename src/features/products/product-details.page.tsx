@@ -1,51 +1,71 @@
-import { Check, ChevronLeft, ChevronRight, Heart, Minus, Plus, RotateCcw, Share2, Shield, ShoppingCart, Star, Truck } from "lucide-react"
-import { Link, useParams } from "react-router-dom"
-import { motion } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { useProducts } from "./products.hooks"
-import { Label } from "@/components/ui/label"
-import { Separator } from "@/components/ui/separator"
-import { useState } from "react"
-import type { ProductVariant } from "./products.types"
-import { useCart } from "../cart/cart.hooks"
-import { useWishlist } from "../wishlist/wishlist.hooks"
+import {
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Heart,
+  Minus,
+  Plus,
+  RotateCcw,
+  Share2,
+  Shield,
+  ShoppingCart,
+  Star,
+  Truck,
+} from "lucide-react";
+import { Link, useParams } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { useProducts } from "./products.hooks";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { useState } from "react";
+import type { ProductVariant } from "./products.types";
+import { useCart } from "../cart/cart.hooks";
+import { useWishlist } from "../wishlist/wishlist.hooks";
 
 const ProductDetailsPage = () => {
-  const { id } = useParams<{id: string}>();
+  const { id } = useParams<{ id: string }>();
   const [selectedImage, setSelectedImage] = useState(0);
-  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
+    null,
+  );
   const [quantity, setQuantity] = useState(1);
   const { product } = useProducts(id!);
   const { addToCart } = useCart();
   const { wishlistItems, addToWishlist, removeFromWishlist } = useWishlist();
-  const isInWishlist = wishlistItems.some(item => item.productId === product?.id);
+  const isInWishlist = wishlistItems.some(
+    (item) => item.productId === product?.id,
+  );
   const handleToggleWishlist = (e: React.MouseEvent) => {
-      e.preventDefault();
-      if (isInWishlist) {
-        removeFromWishlist({ itemId: wishlistItems.find(item => item.productId === product?.id)?.id ?? '' });
-      } else {
-        addToWishlist({ itemId: product?.id ?? '' });
-      }
-    };
+    e.preventDefault();
+    if (isInWishlist) {
+      removeFromWishlist({
+        itemId:
+          wishlistItems.find((item) => item.productId === product?.id)?.id ??
+          "",
+      });
+    } else {
+      addToWishlist({ itemId: product?.id ?? "" });
+    }
+  };
 
-    if (!product) {
-        return (
-          <div className="container py-20 text-center">
-            <h1 className="text-2xl font-bold">Product not found</h1>
-            <p className="mt-2 text-muted-foreground">
-              The product you're looking for doesn't exist.
-            </p>
-            <Link to="/products">
-              <Button className="mt-4">Browse Products</Button>
-            </Link>
-          </div>
-        );
-      }
-    
+  if (!product) {
+    return (
+      <div className="container py-20 text-center">
+        <h1 className="text-2xl font-bold">Product not found</h1>
+        <p className="mt-2 text-muted-foreground">
+          The product you're looking for doesn't exist.
+        </p>
+        <Link to="/products">
+          <Button className="mt-4">Browse Products</Button>
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="container py-8">
@@ -119,7 +139,9 @@ const ProductDetailsPage = () => {
             {/* Badges */}
             <div className="absolute left-4 top-4 flex flex-col gap-2">
               {product?.discountPercent && product.discountPercent > 0 && (
-                <Badge className="bg-primary">-{product.discountPercent}%</Badge>
+                <Badge className="bg-primary">
+                  -{product.discountPercent}%
+                </Badge>
               )}
               {product?.isNewArrival && (
                 <Badge className="bg-info text-info-foreground">New</Badge>
@@ -186,15 +208,21 @@ const ProductDetailsPage = () => {
           {/* Price */}
           <div className="flex items-baseline gap-3">
             <span className="text-3xl font-bold">
-              ${selectedVariant ? selectedVariant.price.toLocaleString() : product?.price.toLocaleString()}
+              $
+              {selectedVariant
+                ? selectedVariant.price.toLocaleString()
+                : product?.price.toLocaleString()}
             </span>
-            {product?.currentPrice && product?.currentPrice !== product?.price && (
-              <span className="text-xl text-muted-foreground line-through">
-                ${product?.price.toLocaleString()}
-              </span>
-            )}
+            {product?.currentPrice &&
+              product?.currentPrice !== product?.price && (
+                <span className="text-xl text-muted-foreground line-through">
+                  ${product?.price.toLocaleString()}
+                </span>
+              )}
             {product?.discountPercent && product.discountPercent > 0 && (
-              <Badge variant="destructive">Save {product.discountPercent}%</Badge>
+              <Badge variant="destructive">
+                Save {product.discountPercent}%
+              </Badge>
             )}
           </div>
 
@@ -285,7 +313,13 @@ const ProductDetailsPage = () => {
             <Button
               size="lg"
               className="flex-1 gap-2"
-              onClick={() => addToCart({ itemId: product?.id, variantId: selectedVariant?.id ?? null, quantity })}
+              onClick={() =>
+                addToCart({
+                  itemId: product?.id,
+                  variantId: selectedVariant?.id ?? null,
+                  quantity,
+                })
+              }
               disabled={product?.stock === 0}
             >
               <ShoppingCart className="h-5 w-5" />
@@ -360,7 +394,9 @@ const ProductDetailsPage = () => {
 
           <TabsContent value="specifications" className="mt-6">
             <div className="grid gap-4 sm:grid-cols-2">
-              <p className="text-muted-foreground col-span-2">Specifications coming soon.</p>
+              <p className="text-muted-foreground col-span-2">
+                Specifications coming soon.
+              </p>
             </div>
           </TabsContent>
 
@@ -389,7 +425,9 @@ const ProductDetailsPage = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <p className="text-muted-foreground text-sm">Rating Distribution coming soon</p>
+                  <p className="text-muted-foreground text-sm">
+                    Rating Distribution coming soon
+                  </p>
                 </div>
               </div>
 
@@ -464,9 +502,8 @@ const ProductDetailsPage = () => {
           <p className="text-muted-foreground">Related Products coming soon</p>
         </section>
       </div>
-
     </div>
-  )
-}
+  );
+};
 
-export default ProductDetailsPage
+export default ProductDetailsPage;

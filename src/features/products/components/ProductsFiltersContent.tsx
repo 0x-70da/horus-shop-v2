@@ -10,7 +10,13 @@ import {
 } from "@/features/categories/categories.hooks";
 import { useSearchParams } from "react-router-dom";
 
-const ProductsFilterContent = ({ activeFiltersCount, clearFilters }: { activeFiltersCount: number; clearFilters: () => void }) => {
+const ProductsFilterContent = ({
+  activeFiltersCount,
+  clearFilters,
+}: {
+  activeFiltersCount: number;
+  clearFilters: () => void;
+}) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const {
     categories,

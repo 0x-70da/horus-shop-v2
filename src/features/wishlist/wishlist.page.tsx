@@ -26,7 +26,9 @@ const WishlistPage = () => {
 
   return (
     <div className="container py-8">
-      <h1 className="mb-8 text-3xl font-bold">Wishlist ({wishlistItems.length})</h1>
+      <h1 className="mb-8 text-3xl font-bold">
+        Wishlist ({wishlistItems.length})
+      </h1>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {wishlistItems.map((item) => (
           <Card key={item.productId} className="overflow-hidden">
@@ -51,7 +53,13 @@ const WishlistPage = () => {
                 <Button
                   size="sm"
                   className="flex-1 gap-1"
-                  onClick={() => addToCart({ itemId: item.productId, variantId: null, quantity: 1 })}
+                  onClick={() =>
+                    addToCart({
+                      itemId: item.productId,
+                      variantId: null,
+                      quantity: 1,
+                    })
+                  }
                 >
                   <ShoppingCart className="h-4 w-4" />
                   Add to Cart
@@ -70,6 +78,6 @@ const WishlistPage = () => {
       </div>
     </div>
   );
-}
+};
 
-export default WishlistPage
+export default WishlistPage;

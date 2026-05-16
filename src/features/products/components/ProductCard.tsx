@@ -15,18 +15,23 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ product, className }: ProductCardProps) => {
-    const { addToCart } = useCart();
-    const { wishlistItems, removeFromWishlist, addToWishlist } = useWishlist();
+  const { addToCart } = useCart();
+  const { wishlistItems, removeFromWishlist, addToWishlist } = useWishlist();
 
-    const isInWishlist = wishlistItems.some(item => item.productId === product.id);
-    const handleToggleWishlist = (e: React.MouseEvent) => {
-      e.preventDefault();
-      if (isInWishlist) {
-        removeFromWishlist({ itemId: wishlistItems.find(item => item.productId === product.id)?.id ?? '' });
-      } else {
-        addToWishlist({ itemId: product.id });
-      }
-    };
+  const isInWishlist = wishlistItems.some(
+    (item) => item.productId === product.id,
+  );
+  const handleToggleWishlist = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (isInWishlist) {
+      removeFromWishlist({
+        itemId:
+          wishlistItems.find((item) => item.productId === product.id)?.id ?? "",
+      });
+    } else {
+      addToWishlist({ itemId: product.id });
+    }
+  };
 
   return (
     <motion.div
@@ -100,7 +105,11 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
                 size="sm"
                 onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                   e.preventDefault();
-                  addToCart({ itemId: product.id, variantId: null, quantity: 1 });
+                  addToCart({
+                    itemId: product.id,
+                    variantId: null,
+                    quantity: 1,
+                  });
                 }}
                 disabled={product.stock === 0}
               >
@@ -133,13 +142,16 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
             {/* Price */}
             <div className="flex items-center gap-2">
               <span className="text-lg font-bold">
-                ${product.currentPrice?.toLocaleString() ?? product.price.toLocaleString()}
+                $
+                {product.currentPrice?.toLocaleString() ??
+                  product.price.toLocaleString()}
               </span>
-              {product.currentPrice && product.currentPrice !== product.price && (
-                <span className="text-sm text-muted-foreground line-through">
-                  ${product.price.toLocaleString()}
-                </span>
-              )}
+              {product.currentPrice &&
+                product.currentPrice !== product.price && (
+                  <span className="text-sm text-muted-foreground line-through">
+                    ${product.price.toLocaleString()}
+                  </span>
+                )}
             </div>
           </CardContent>
         </Card>

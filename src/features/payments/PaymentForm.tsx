@@ -1,18 +1,22 @@
 // payment-form.tsx
 import { useState } from "react";
-import { PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import {
+  PaymentElement,
+  useStripe,
+  useElements,
+} from "@stripe/react-stripe-js";
 
 interface PaymentFormProps {
   orderId: string;
-  total:   number;
+  total: number;
 }
 
 export default function PaymentForm({ orderId, total }: PaymentFormProps) {
-  const stripe   = useStripe();
+  const stripe = useStripe();
   const elements = useElements();
 
   const [isLoading, setIsLoading] = useState(false);
-  const [error,     setError]     = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,8 +46,9 @@ export default function PaymentForm({ orderId, total }: PaymentFormProps) {
     // لأن لو نجح Stripe بيعمل redirect تلقائي للـ return_url
     if (confirmError) {
       setError(
-        confirmError.type === "card_error" || confirmError.type === "validation_error"
-          ? confirmError.message ?? "Payment failed"
+        confirmError.type === "card_error" ||
+          confirmError.type === "validation_error"
+          ? (confirmError.message ?? "Payment failed")
           : "An unexpected error occurred",
       );
     }

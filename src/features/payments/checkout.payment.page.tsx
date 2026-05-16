@@ -13,16 +13,16 @@ const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY!);
 
 interface LocationState {
   clientSecret: string;
-  orderId:      string;
-  total:        number;
+  orderId: string;
+  total: number;
 }
 
 // ===== Payment Form =====
 function PaymentForm({ orderId, total }: { orderId: string; total: number }) {
-  const stripe   = useStripe();
+  const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
-  const [error,   setError]   = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,7 +78,7 @@ function PaymentForm({ orderId, total }: { orderId: string; total: number }) {
 export default function CheckoutPaymentPage() {
   const location = useLocation();
   const navigate = useNavigate();
-  const state    = location.state as LocationState | null;
+  const state = location.state as LocationState | null;
 
   useEffect(() => {
     if (!state?.clientSecret) {
@@ -92,7 +92,8 @@ export default function CheckoutPaymentPage() {
     <div className="container max-w-md py-12">
       <h1 className="text-2xl font-bold mb-2">Complete Payment</h1>
       <p className="text-muted-foreground mb-8">
-        Total: <span className="font-semibold text-foreground">{state.total} EGP</span>
+        Total:{" "}
+        <span className="font-semibold text-foreground">{state.total} EGP</span>
       </p>
 
       <div className="border rounded-lg p-6">

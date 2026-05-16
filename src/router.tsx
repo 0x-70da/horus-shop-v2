@@ -23,54 +23,57 @@ import CheckoutPaymentStatusPage from "./features/payments/checkout.payment.stat
 import AddressesPage from "./features/addresses/address.page";
 
 export const router = createBrowserRouter([
-    {
-        element: <GuestGuard />,
-        children: [
-          {
-            path: "/",
-            element: <Layout />,
-            children: [
-              { path: "/login", element: <LoginPage /> },
-              { path: "/register", element: <RegisterPage /> },
-              { path: "/forgot-password", element: <ForgotPasswordPage /> },
-              { path: "/verify-code", element: <VerifyCodePage /> },
-              { path: "/reset-password", element: <ResetPasswordPage /> },
-            ]
-          }
-        ]
-    },
-
-    {
+  {
+    element: <GuestGuard />,
+    children: [
+      {
         path: "/",
         element: <Layout />,
         children: [
-            { index: true, element: <HomePage /> },
-            { path: "products", element: <ProductsPage /> },
-            { path: "products/:id", element: <ProductDetailsPage /> },
-            { path: "category/:id", element: <CategoriesPage /> },
-        ]
-    },
+          { path: "/login", element: <LoginPage /> },
+          { path: "/register", element: <RegisterPage /> },
+          { path: "/forgot-password", element: <ForgotPasswordPage /> },
+          { path: "/verify-code", element: <VerifyCodePage /> },
+          { path: "/reset-password", element: <ResetPasswordPage /> },
+        ],
+      },
+    ],
+  },
 
-    {
-        element: <AuthGuard />,
+  {
+    path: "/",
+    element: <Layout />,
+    children: [
+      { index: true, element: <HomePage /> },
+      { path: "products", element: <ProductsPage /> },
+      { path: "products/:id", element: <ProductDetailsPage /> },
+      { path: "category/:id", element: <CategoriesPage /> },
+    ],
+  },
+
+  {
+    element: <AuthGuard />,
+    children: [
+      {
+        path: "/",
+        element: <Layout />,
         children: [
-            {
-                path: "/",
-                element: <Layout />,
-                children: [
-                    { path: "cart", element: <CartPage /> },
-                    { path: "wishlist", element: <WishlistPage /> },
-                    { path: "orders", element: <OrdersPage /> },
-                    { path: "orders/:orderId", element: <OrderDetailsPage /> },
-                    { path: "profile", element: <ProfilePage /> },
-                    { path: "checkout", element: <CheckoutPage /> },
-                    { path: "checkout/payment", element: <CheckoutPaymentPage /> },
-                    { path : "checkout/payment/status", element: <CheckoutPaymentStatusPage /> },
-                    { path: "profile/addresses", element: <AddressesPage /> }
-                ]
-            }
-        ]
-    },
+          { path: "cart", element: <CartPage /> },
+          { path: "wishlist", element: <WishlistPage /> },
+          { path: "orders", element: <OrdersPage /> },
+          { path: "orders/:orderId", element: <OrderDetailsPage /> },
+          { path: "profile", element: <ProfilePage /> },
+          { path: "checkout", element: <CheckoutPage /> },
+          { path: "checkout/payment", element: <CheckoutPaymentPage /> },
+          {
+            path: "checkout/payment/status",
+            element: <CheckoutPaymentStatusPage />,
+          },
+          { path: "profile/addresses", element: <AddressesPage /> },
+        ],
+      },
+    ],
+  },
 
-    { path: "*", element: <NotFound /> }
+  { path: "*", element: <NotFound /> },
 ]);

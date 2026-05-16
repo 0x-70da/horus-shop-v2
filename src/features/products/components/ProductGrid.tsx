@@ -11,25 +11,36 @@ interface ProductGridProps {
   errorMessage?: string;
 }
 
-const ProductGrid = ({ products, isLoading, isError, errorMessage, columns = 4, className }: ProductGridProps) => {
+const ProductGrid = ({
+  products,
+  isLoading,
+  isError,
+  errorMessage,
+  columns = 4,
+  className,
+}: ProductGridProps) => {
   const gridCols = {
-    2: 'grid-cols-1 sm:grid-cols-2',
-    3: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
-    4: 'grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4',
+    2: "grid-cols-1 sm:grid-cols-2",
+    3: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
+    4: "grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4",
   };
 
-  if(isLoading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <p className="text-lg font-medium text-muted-foreground">Loading products...</p>
+        <p className="text-lg font-medium text-muted-foreground">
+          Loading products...
+        </p>
       </div>
     );
   }
 
-  if(isError) {
+  if (isError) {
     return (
       <div className="flex items-center justify-center py-12">
-        <p className="text-lg font-medium text-destructive">{errorMessage || 'Failed to load products'}</p>
+        <p className="text-lg font-medium text-destructive">
+          {errorMessage || "Failed to load products"}
+        </p>
       </div>
     );
   }
@@ -48,7 +59,7 @@ const ProductGrid = ({ products, isLoading, isError, errorMessage, columns = 4, 
   }
 
   return (
-    <div className={cn('grid gap-4 md:gap-6', gridCols[columns], className)}>
+    <div className={cn("grid gap-4 md:gap-6", gridCols[columns], className)}>
       {products.map((product) => (
         <ProductCard key={product.id} product={product} />
       ))}

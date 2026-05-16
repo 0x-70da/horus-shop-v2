@@ -4,7 +4,10 @@ import { ArrowRight, ChevronRight, Zap, Star, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { useBrands, useCategories } from "@/features/categories/categories.hooks";
+import {
+  useBrands,
+  useCategories,
+} from "@/features/categories/categories.hooks";
 import ProductGrid from "@/features/products/components/ProductGrid";
 import { useProducts } from "@/features/products/products.hooks";
 import { usePromoBanners } from "@/features/promo/promo.hooks";
@@ -23,7 +26,10 @@ const Home = () => {
   // const { flashDeals } = useFlashDeals();
   const bestSellers = products.filter((p) => p.totalSold > 100);
   const newArrivals = [...products]
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    )
     .slice(0, 8);
   const featuredProducts = products.filter((p) => p.rating >= 4.5).slice(0, 8);
 
@@ -198,8 +204,8 @@ const Home = () => {
               </Button>
             </Link>
           </div>
-
-          <ProductGrid products={featuredProducts} columns={4} /> {/* featured products should ideally come from a separate API endpoint, but using all products for now*/}
+          <ProductGrid products={featuredProducts} columns={4} />{" "}
+          {/* featured products should ideally come from a separate API endpoint, but using all products for now*/}
         </div>
       </section>
 
@@ -298,16 +304,14 @@ const Home = () => {
             Trusted by Leading Brands
           </h2>
           <div className="flex flex-wrap items-center justify-center gap-8 opacity-60">
-            {brands.map(
-              (brand) => (
-                <div
-                  key={brand.id}
-                  className="text-2xl font-bold tracking-tight text-muted-foreground"
-                >
-                  {brand.name}
-                </div>
-              ),
-            )}
+            {brands.map((brand) => (
+              <div
+                key={brand.id}
+                className="text-2xl font-bold tracking-tight text-muted-foreground"
+              >
+                {brand.name}
+              </div>
+            ))}
           </div>
         </div>
       </section>

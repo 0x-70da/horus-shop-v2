@@ -1,10 +1,21 @@
-import { CreditCard, Facebook, Instagram, Mail, MapPin, Phone, Shield, Truck, Twitter, Youtube } from "lucide-react"
-import { Link } from "react-router-dom"
-import { Separator } from "./ui/separator"
-import { Field, FieldError } from "./ui/field"
-import { Button } from "./ui/button"
-import { Input } from "./ui/input"
-import { useCategories } from "@/features/categories/categories.hooks"
+import {
+  CreditCard,
+  Facebook,
+  Instagram,
+  Mail,
+  MapPin,
+  Phone,
+  Shield,
+  Truck,
+  Twitter,
+  Youtube,
+} from "lucide-react";
+import { Link } from "react-router-dom";
+import { Separator } from "./ui/separator";
+import { Field, FieldError } from "./ui/field";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { useCategories } from "@/features/categories/categories.hooks";
 
 const Footer = () => {
   const { categories } = useCategories();
@@ -86,19 +97,16 @@ const Footer = () => {
               <h4 className="mb-3 font-semibold">
                 Subscribe to our newsletter
               </h4>
-                <form
-                  // onSubmit={handleSubmit(onSubmit)}
-                  className="flex gap-2"
-                >
-                  <Field>
-                      <Input
-                        type="email"
-                        placeholder="Enter your email"
-                      />
-                    <FieldError />
-                  </Field>
-                  <Button type="submit">Subscribe</Button>
-                </form>
+              <form
+                // onSubmit={handleSubmit(onSubmit)}
+                className="flex gap-2"
+              >
+                <Field>
+                  <Input type="email" placeholder="Enter your email" />
+                  <FieldError />
+                </Field>
+                <Button type="submit">Subscribe</Button>
+              </form>
               <p className="mt-2 text-xs text-muted-foreground">
                 Get exclusive deals and updates. Unsubscribe anytime.
               </p>
@@ -251,7 +259,7 @@ const Footer = () => {
         </div>
       </div>
     </footer>
-  )
-}
+  );
+};
 
-export default Footer
+export default Footer;

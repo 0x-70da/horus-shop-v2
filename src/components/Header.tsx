@@ -30,7 +30,7 @@ import {
 } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
-import { useCategories } from "../features/categories/categories.hooks"
+import { useCategories } from "../features/categories/categories.hooks";
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/features/auth/auth.hooks";
@@ -53,14 +53,18 @@ const categoryIcons: Record<string, React.ReactNode> = {
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
-  const { categories, isLoading, isError, errorMessage} = useCategories();
+  const { categories, isLoading, isError, errorMessage } = useCategories();
   const { wishlistItems } = useWishlist();
   const { items: cartItems } = useCart();
 
   const wishlistItemsCount = wishlistItems.length;
-  const cartItemsCount = useMemo(() => {
-    return cartItems?.reduce((total: number, item: { quantity: number }) => total + item.quantity, 0);
-  }, [cartItems]) ?? 0;
+  const cartItemsCount =
+    useMemo(() => {
+      return cartItems?.reduce(
+        (total: number, item: { quantity: number }) => total + item.quantity,
+        0,
+      );
+    }, [cartItems]) ?? 0;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
@@ -113,26 +117,28 @@ const Header = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-56">
-                { isLoading ? (
+                {isLoading ? (
                   <DropdownMenuLabel>Loading categories...</DropdownMenuLabel>
                 ) : isError ? (
                   <DropdownMenuLabel className="text-destructive">
                     {errorMessage || "Failed to load categories"}
                   </DropdownMenuLabel>
-                ) : categories ? categories.map((category) => (
-                  <DropdownMenuItem key={category.id} asChild>
-                    <Link
-                      to={`/category/${category.id}`}
-                      className="flex items-center gap-2"
-                    >
-                      {categoryIcons[category.icon]}
-                      {category.name}
-                      <span className="ml-auto text-xs text-muted-foreground">
-                        {category.products_count}
-                      </span>
-                    </Link>
-                  </DropdownMenuItem>
-                )): (
+                ) : categories ? (
+                  categories.map((category) => (
+                    <DropdownMenuItem key={category.id} asChild>
+                      <Link
+                        to={`/category/${category.id}`}
+                        className="flex items-center gap-2"
+                      >
+                        {categoryIcons[category.icon]}
+                        {category.name}
+                        <span className="ml-auto text-xs text-muted-foreground">
+                          {category.products_count}
+                        </span>
+                      </Link>
+                    </DropdownMenuItem>
+                  ))
+                ) : (
                   <DropdownMenuLabel>No categories found</DropdownMenuLabel>
                 )}
               </DropdownMenuContent>
@@ -189,56 +195,56 @@ const Header = () => {
             </Link>
 
             {/* User Menu */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="relative">
-                    {isAuthenticated && user?.avatar ? (
-                      <img
-                        src={user.avatar}
-                        alt={user.firstName}
-                        className="h-7 w-7 rounded-full object-cover"
-                      />
-                    ) : (
-                      <User className="h-5 w-5" />
-                    )}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  {isAuthenticated ? (
-                    <>
-                      <DropdownMenuLabel>
-                        Hi, {user?.firstName}!
-                      </DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem asChild>
-                        <Link to="/profile">My Profile</Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link to="/orders">My Orders</Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link to="/wishlist">Wishlist</Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        onClick={() => logout()}
-                        className="text-destructive"
-                      >
-                        Log Out
-                      </DropdownMenuItem>
-                    </>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="relative">
+                  {isAuthenticated && user?.avatar ? (
+                    <img
+                      src={user.avatar}
+                      alt={user.firstName}
+                      className="h-7 w-7 rounded-full object-cover"
+                    />
                   ) : (
-                    <>
-                      <DropdownMenuItem asChild>
-                        <Link to="/login">Sign In</Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link to="/register">Create Account</Link>
-                      </DropdownMenuItem>
-                    </>
+                    <User className="h-5 w-5" />
                   )}
-                </DropdownMenuContent>
-              </DropdownMenu>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                {isAuthenticated ? (
+                  <>
+                    <DropdownMenuLabel>
+                      Hi, {user?.firstName}!
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link to="/profile">My Profile</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/orders">My Orders</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/wishlist">Wishlist</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={() => logout()}
+                      className="text-destructive"
+                    >
+                      Log Out
+                    </DropdownMenuItem>
+                  </>
+                ) : (
+                  <>
+                    <DropdownMenuItem asChild>
+                      <Link to="/login">Sign In</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/register">Create Account</Link>
+                    </DropdownMenuItem>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             {/* Mobile Menu Button */}
             <Button
@@ -276,17 +282,20 @@ const Header = () => {
                 >
                   All Products
                 </Link>
-                {categories && !isError && !isLoading && categories.map((category) => (
-                  <Link
-                    key={category.id}
-                    to={`/category/${category.slug}`}
-                    className="flex items-center gap-2 px-4 py-2 text-sm transition-colors hover:bg-accent rounded-md"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    {categoryIcons[category.icon]}
-                    {category.name}
-                  </Link>
-                ))}
+                {categories &&
+                  !isError &&
+                  !isLoading &&
+                  categories.map((category) => (
+                    <Link
+                      key={category.id}
+                      to={`/category/${category.slug}`}
+                      className="flex items-center gap-2 px-4 py-2 text-sm transition-colors hover:bg-accent rounded-md"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      {categoryIcons[category.icon]}
+                      {category.name}
+                    </Link>
+                  ))}
               </nav>
             </motion.div>
           )}
