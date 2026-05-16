@@ -41,3 +41,13 @@ export const deleteAddress = async (addressId: string) => {
 
   return data;
 }
+
+export const setDefaultAddress = async (addressId: string) => {
+  const { data } = await api.patch<ApiResponse<null>>(`/addresses/${addressId}/set-default`);
+
+  if(!data.success) {
+      throw new Error(data.message);
+  }
+
+  return data;
+}

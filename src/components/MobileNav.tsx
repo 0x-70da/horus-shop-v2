@@ -1,11 +1,15 @@
 import { Heart, Home, Search, ShoppingCart, User } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useCart } from "@/features/cart/cart.hooks";
+import { useWishlist } from "@/features/wishlist/wishlist.hooks";
 import { cn } from "@/lib/utils";
 import { Badge } from "./ui/badge";
 
 const MobileNav = () => {
-    const cartItemCount = 0; // Replace with actual cart item count from store
-    const wishlistItemCount = 0; // Replace with actual wishlist item count from store
+    const { itemCount } = useCart();
+    const { wishlistItems } = useWishlist();
+    const cartItemCount = itemCount ?? 0;
+    const wishlistItemCount = wishlistItems?.length ?? 0;
 
     const navItems = [
     { path: "/", icon: Home, label: "Home" },

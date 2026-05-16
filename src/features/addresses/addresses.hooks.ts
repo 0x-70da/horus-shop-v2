@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createAddress, deleteAddress, getAddresses, updateAddress } from "./addresses.api";
+import { createAddress, deleteAddress, getAddresses, setDefaultAddress, updateAddress } from "./addresses.api";
 import type { Address, CreateAddressBody, UpdateAddressBody } from "./addresses.types";
 import type { ApiError, ApiSuccess } from "@/types/api.types";
 import type { AxiosError } from "axios";
@@ -37,7 +37,7 @@ export const useAddresses = (addressId?: string) => {
 
   const { mutate: setDefaultAddressMutate, isPending: isSettingDefaultAddress, isError: isSettingDefaultAddressError, error: settingDefaultAddressError } = useMutation<ApiSuccess<null>, AxiosError<ApiError>, string>({
     mutationKey: ['addresses', 'setDefault'],
-    mutationFn: (addressId: string) => deleteAddress(addressId),
+    mutationFn: (addressId: string) => setDefaultAddress(addressId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['addresses'] });
     }

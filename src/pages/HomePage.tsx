@@ -8,7 +8,6 @@ import { useBrands, useCategories } from "@/features/categories/categories.hooks
 import ProductGrid from "@/features/products/components/ProductGrid";
 import { useProducts } from "@/features/products/products.hooks";
 import { usePromoBanners } from "@/features/promo/promo.hooks";
-import { useFlashDeals } from "@/features/flash/flash.hooks";
 
 // ============================================
 // Home Page
@@ -21,7 +20,7 @@ const Home = () => {
   const { products } = useProducts();
   const { brands } = useBrands();
   const { promoBanners } = usePromoBanners();
-  const { flashDeals } = useFlashDeals();
+  // const { flashDeals } = useFlashDeals();
   const bestSellers = products.filter((p) => p.totalSold > 100);
   const newArrivals = [...products]
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())

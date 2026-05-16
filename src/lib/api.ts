@@ -9,13 +9,16 @@ const processQueue = (error: unknown) => {
 }
 
 export const api = axios.create({
-    baseURL: import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:5000/api',
+    baseURL: import.meta.env.VITE_API_BASE_URL,
     headers: {
         'Content-Type': 'application/json',
     },
     timeout: 5000,
     withCredentials: true,
 });
+if (!import.meta.env.VITE_API_BASE_URL) {
+  throw new Error('VITE_API_BASE_URL environment variable is required');
+}
 
 api.interceptors.response.use(
     response => response,
