@@ -28,7 +28,7 @@ const ProductGrid = ({
 
   if (isLoading) {
     return (
-      <div className={cn("grid gap-4 md:gap-6", gridCols[columns])}>
+      <div className={cn("grid gap-4 md:gap-6", gridCols[columns], className)}>
         {Array.from({ length: 8 }).map((_, i) => (
           <SkeletonCard key={i} />
         ))}
