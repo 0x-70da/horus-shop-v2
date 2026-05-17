@@ -50,7 +50,13 @@ export default function AddressesPage() {
 
       {/* Loading */}
       {isAddressesLoading && (
-        <div className="space-y-4">
+        <div
+          className="space-y-4"
+          role="status"
+          aria-live="polite"
+          aria-busy="true"
+        >
+          <span className="sr-only">Loading addresses...</span>
           {Array.from({ length: 2 }).map((_, i) => (
             <div key={i} className="border rounded-lg p-4 space-y-3">
               <div className="flex items-start justify-between">
