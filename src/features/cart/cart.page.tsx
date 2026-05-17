@@ -1,18 +1,18 @@
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
-import { motion } from "framer-motion"
-import { ArrowRight, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react"
-import { Link } from "react-router-dom"
-import { useCart } from "./cart.hooks"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { motion } from "framer-motion";
+import { ArrowRight, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
+import { Link } from "react-router-dom";
+import { useCart } from "./cart.hooks";
 
 const CartPage = () => {
-    const {updateCartItem, removeFromCart, subtotal, items } = useCart();
-    const shipping = subtotal > 100 ? 0 : 10;
-    const tax = subtotal * 0.07;
-    const finalTotal = subtotal + shipping + tax;
+  const { updateCartItem, removeFromCart, subtotal, items } = useCart();
+  const shipping = subtotal > 100 ? 0 : 10;
+  const tax = subtotal * 0.07;
+  const finalTotal = subtotal + shipping + tax;
 
-    if (items?.length === 0) {
+  if (items?.length === 0) {
     return (
       <div className="container py-20 text-center">
         <ShoppingBag className="mx-auto h-16 w-16 text-muted-foreground" />
@@ -58,10 +58,7 @@ const CartPage = () => {
                   </p>
                 )}
                 <p className="text-lg font-bold">
-                  $
-                  {(
-                    item.currentPrice
-                  ).toLocaleString()}
+                  ${item.currentPrice.toLocaleString()}
                 </p>
                 <div className="mt-2 flex items-center gap-2">
                   <Button
@@ -70,7 +67,8 @@ const CartPage = () => {
                     className="h-8 w-8"
                     onClick={() =>
                       updateCartItem({
-                        itemId: item.id, quantity: item.quantity - 1
+                        itemId: item.id,
+                        quantity: item.quantity - 1,
                       })
                     }
                   >
@@ -81,9 +79,10 @@ const CartPage = () => {
                     variant="outline"
                     size="icon"
                     className="h-8 w-8"
-                    onClick={() => 
+                    onClick={() =>
                       updateCartItem({
-                        itemId: item.id, quantity: item.quantity + 1
+                        itemId: item.id,
+                        quantity: item.quantity + 1,
                       })
                     }
                   >
@@ -93,9 +92,7 @@ const CartPage = () => {
                     variant="ghost"
                     size="icon"
                     className="ml-auto text-destructive"
-                    onClick={() => 
-                      removeFromCart({ itemId: item.id })
-                    }
+                    onClick={() => removeFromCart({ itemId: item.id })}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -156,7 +153,7 @@ const CartPage = () => {
         </Card>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default CartPage
+export default CartPage;

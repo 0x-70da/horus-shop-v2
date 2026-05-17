@@ -17,13 +17,22 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "../auth.hooks";
 
 const RegisterPage = () => {
-    const [showPassword, setShowPassword] = useState(false);
-    const { registerUser, isRegisterPending, isRegisterError, registerErrorMessage } = useAuth();
-    const { register, handleSubmit, formState: { errors } } = useForm({
-        resolver: zodResolver(RegisterSchema),
-        defaultValues: { firstName: "", lastName: "", email: "", password: "" },
-    });
-    const onSubmit = (data: RegisterFormData) => registerUser(data);
+  const [showPassword, setShowPassword] = useState(false);
+  const {
+    registerUser,
+    isRegisterPending,
+    isRegisterError,
+    registerErrorMessage,
+  } = useAuth();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(RegisterSchema),
+    defaultValues: { firstName: "", lastName: "", email: "", password: "" },
+  });
+  const onSubmit = (data: RegisterFormData) => registerUser(data);
 
   return (
     <div className="container flex min-h-[80vh] items-center justify-center py-8">
@@ -48,7 +57,11 @@ const RegisterPage = () => {
             </div>
             <Field>
               <FieldLabel>Email</FieldLabel>
-              <Input {...register("email")} type="email" placeholder="you@example.com" />
+              <Input
+                {...register("email")}
+                type="email"
+                placeholder="you@example.com"
+              />
               <FieldError>{errors.email?.message}</FieldError>
             </Field>
             <Field>
@@ -74,8 +87,14 @@ const RegisterPage = () => {
                 </Button>
               </div>
               <FieldError>{errors.password?.message}</FieldError>
-            {isRegisterError && <p className="text-sm text-red-500">{registerErrorMessage}</p>}
-              <Button type="submit" disabled={isRegisterPending} className="w-full">
+              {isRegisterError && (
+                <p className="text-sm text-red-500">{registerErrorMessage}</p>
+              )}
+              <Button
+                type="submit"
+                disabled={isRegisterPending}
+                className="w-full"
+              >
                 Create Account
               </Button>
             </Field>

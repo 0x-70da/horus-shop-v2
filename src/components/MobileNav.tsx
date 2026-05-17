@@ -6,12 +6,12 @@ import { cn } from "@/lib/utils";
 import { Badge } from "./ui/badge";
 
 const MobileNav = () => {
-    const { itemCount } = useCart();
-    const { wishlistItems } = useWishlist();
-    const cartItemCount = itemCount ?? 0;
-    const wishlistItemCount = wishlistItems?.length ?? 0;
+  const { itemCount } = useCart();
+  const { wishlistItems } = useWishlist();
+  const cartItemCount = itemCount ?? 0;
+  const wishlistItemCount = wishlistItems?.length ?? 0;
 
-    const navItems = [
+  const navItems = [
     { path: "/", icon: Home, label: "Home" },
     { path: "/search", icon: Search, label: "Search" },
     { path: "/cart", icon: ShoppingCart, label: "Cart", badge: cartItemCount },
@@ -61,7 +61,7 @@ const MobileNav = () => {
         })}
       </div>
     </nav>
-  )
-}
+  );
+};
 
-export default MobileNav
+export default MobileNav;

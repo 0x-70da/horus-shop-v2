@@ -6,7 +6,7 @@ const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 interface StripeProviderProps {
   clientSecret: string;
-  children:     React.ReactNode;
+  children: React.ReactNode;
 }
 
 export default function StripeProvider({
@@ -19,11 +19,11 @@ export default function StripeProvider({
       options={{
         clientSecret,
         appearance: {
-          theme:     "stripe",
+          theme: "stripe",
           variables: {
-            colorPrimary:    "#000000",
-            borderRadius:    "8px",
-            fontFamily:      "inherit",
+            colorPrimary: "#000000",
+            borderRadius: "8px",
+            fontFamily: "inherit",
           },
         },
       }}

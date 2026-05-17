@@ -5,22 +5,22 @@ import { useOrders } from "./orders.hooks";
 import type { OrderStatus } from "./orders.types";
 
 const STATUS_TABS: { label: string; value: OrderStatus | undefined }[] = [
-  { label: "All",        value: undefined },
-  { label: "Pending",    value: "pending" },
+  { label: "All", value: undefined },
+  { label: "Pending", value: "pending" },
   { label: "Processing", value: "processing" },
-  { label: "Shipped",    value: "shipped" },
-  { label: "Delivered",  value: "delivered" },
-  { label: "Cancelled",  value: "cancelled" },
+  { label: "Shipped", value: "shipped" },
+  { label: "Delivered", value: "delivered" },
+  { label: "Cancelled", value: "cancelled" },
 ];
 
 const STATUS_COLORS: Record<string, string> = {
-  pending:    "bg-yellow-100 text-yellow-800",
-  confirmed:  "bg-blue-100 text-blue-800",
+  pending: "bg-yellow-100 text-yellow-800",
+  confirmed: "bg-blue-100 text-blue-800",
   processing: "bg-blue-100 text-blue-800",
-  shipped:    "bg-purple-100 text-purple-800",
-  delivered:  "bg-green-100 text-green-800",
-  cancelled:  "bg-red-100 text-red-800",
-  refunded:   "bg-gray-100 text-gray-800",
+  shipped: "bg-purple-100 text-purple-800",
+  delivered: "bg-green-100 text-green-800",
+  cancelled: "bg-red-100 text-red-800",
+  refunded: "bg-gray-100 text-gray-800",
 };
 
 export default function OrdersPage() {
@@ -39,14 +39,19 @@ export default function OrdersPage() {
 
       {/* Tabs */}
       <div className="flex gap-1 border-b mb-6 overflow-x-auto">
-        {STATUS_TABS.map(tab => (
+        {STATUS_TABS.map((tab) => (
           <button
             key={tab.label}
-            onClick={() => { setActiveStatus(tab.value); setPage(1); }}
+            onClick={() => {
+              setActiveStatus(tab.value);
+              setPage(1);
+            }}
             className={`px-4 py-2 text-sm whitespace-nowrap transition-colors
-              ${activeStatus === tab.value
-                ? "border-b-2 border-black font-medium"
-                : "text-muted-foreground"}`}
+              ${
+                activeStatus === tab.value
+                  ? "border-b-2 border-black font-medium"
+                  : "text-muted-foreground"
+              }`}
           >
             {tab.label}
           </button>
@@ -54,15 +59,23 @@ export default function OrdersPage() {
       </div>
 
       {/* States */}
-      {isOrdersLoading && <p className="text-center py-10 text-muted-foreground">Loading...</p>}
-      {isOrdersError   && <p className="text-center py-10 text-destructive">Failed to load orders</p>}
+      {isOrdersLoading && (
+        <p className="text-center py-10 text-muted-foreground">Loading...</p>
+      )}
+      {isOrdersError && (
+        <p className="text-center py-10 text-destructive">
+          Failed to load orders
+        </p>
+      )}
       {!isOrdersLoading && !isOrdersError && orders.length === 0 && (
-        <p className="text-center py-10 text-muted-foreground">No orders found</p>
+        <p className="text-center py-10 text-muted-foreground">
+          No orders found
+        </p>
       )}
 
       {/* Orders */}
       <div className="space-y-3">
-        {orders.map(order => (
+        {orders.map((order) => (
           <Link
             to={`/orders/${order.id}`}
             key={order.id}
@@ -70,23 +83,28 @@ export default function OrdersPage() {
           >
             <div className="flex items-center justify-between mb-3">
               <span className="font-medium text-sm">#{order.order_number}</span>
-              <span className={`text-xs px-2 py-1 rounded-full font-medium ${STATUS_COLORS[order.status]}`}>
+              <span
+                className={`text-xs px-2 py-1 rounded-full font-medium ${STATUS_COLORS[order.status]}`}
+              >
                 {order.status}
               </span>
             </div>
 
             {/* Item thumbnails */}
             <div className="flex gap-2 mb-3">
-              {order.items.slice(0, 4).map((item, i) => (
-                item.product_image && (
-                  <img
-                    key={i}
-                    src={item.product_image}
-                    alt={item.product_name}
-                    className="w-12 h-12 object-cover rounded border"
-                  />
-                )
-              ))}
+              {order.items
+                .slice(0, 4)
+                .map(
+                  (item, i) =>
+                    item.product_image && (
+                      <img
+                        key={i}
+                        src={item.product_image}
+                        alt={item.product_name}
+                        className="w-12 h-12 object-cover rounded border"
+                      />
+                    ),
+                )}
               {order.items.length > 4 && (
                 <div className="w-12 h-12 border rounded flex items-center justify-center text-xs text-muted-foreground">
                   +{order.items.length - 4}

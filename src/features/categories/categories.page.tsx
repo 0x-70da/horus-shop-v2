@@ -1,40 +1,58 @@
-import { Badge } from "@/components/ui/badge"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ChevronRight } from "lucide-react"
-import { Link, useParams, useSearchParams } from "react-router-dom"
-import { useCategories } from "./categories.hooks"
-import { Button } from "@/components/ui/button"
-import ProductGrid from "../products/components/ProductGrid"
-import { useProducts } from "../products/products.hooks"
-import type { ProductsFilter, SortBy, SortOptions } from "../products/products.types"
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ChevronRight } from "lucide-react";
+import { Link, useParams, useSearchParams } from "react-router-dom";
+import { useCategories } from "./categories.hooks";
+import { Button } from "@/components/ui/button";
+import ProductGrid from "../products/components/ProductGrid";
+import { useProducts } from "../products/products.hooks";
+import type {
+  ProductsFilter,
+  SortBy,
+  SortOptions,
+} from "../products/products.types";
 
 const CategoriesPage = () => {
-    const { categories, isLoading: isCategoriesLoading, isError: isCategoriesError, errorMessage: categoriesErrorMessage } = useCategories();
-    console.log('Categories:', categories);
-    const { id } = useParams<{ id: string }>();
-    const [ searchParams, setSearchParams ] = useSearchParams();
-    const category = categories?.find(c => c.id === id);
-    
-    const filters: ProductsFilter = {
-      category: id,
-      subcategory: searchParams.get('subcategory') ?? undefined,
-      sortBy: searchParams.get('sortBy') as SortBy ?? 'newest',
-      sortOrder: searchParams.get('sortOrder') as SortOptions ?? 'desc',
-      page: searchParams.get('page') ? parseInt(searchParams.get('page')!) : 1,
-      limit: searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : 20,
-    }
+  const {
+    categories,
+    isLoading: isCategoriesLoading,
+    isError: isCategoriesError,
+    errorMessage: categoriesErrorMessage,
+  } = useCategories();
+  console.log("Categories:", categories);
+  const { id } = useParams<{ id: string }>();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const category = categories?.find((c) => c.id === id);
 
-    const { products, isProductsLoading, isProductsError, productsErrorMessage } = useProducts("", filters);
+  const filters: ProductsFilter = {
+    category: id,
+    subcategory: searchParams.get("subcategory") ?? undefined,
+    sortBy: (searchParams.get("sortBy") as SortBy) ?? "newest",
+    sortOrder: (searchParams.get("sortOrder") as SortOptions) ?? "desc",
+    page: searchParams.get("page") ? parseInt(searchParams.get("page")!) : 1,
+    limit: searchParams.get("limit")
+      ? parseInt(searchParams.get("limit")!)
+      : 20,
+  };
 
-    if (isCategoriesLoading) {
-        return <div>Loading...</div>;
-    }
+  const { products, isProductsLoading, isProductsError, productsErrorMessage } =
+    useProducts("", filters);
 
-    if (isCategoriesError) {
-        return <div>Error: {categoriesErrorMessage}</div>;
-    }
+  if (isCategoriesLoading) {
+    return <div>Loading...</div>;
+  }
 
-    if (!category) {
+  if (isCategoriesError) {
+    return <div>Error: {categoriesErrorMessage}</div>;
+  }
+
+  if (!category) {
     return (
       <div className="container py-20 text-center">
         <h1 className="text-2xl font-bold">Category not found</h1>
@@ -86,18 +104,26 @@ const CategoriesPage = () => {
             <Badge
               variant={filters.subcategory === null ? "default" : "outline"}
               className="cursor-pointer px-4 py-2"
-              onClick={() => setSearchParams((prev) => { prev.delete('subcategory'); return prev; })}
+              onClick={() =>
+                setSearchParams((prev) => {
+                  prev.delete("subcategory");
+                  return prev;
+                })
+              }
             >
               All {category.name}
             </Badge>
             {category.subcategories.map((sub) => (
               <Badge
                 key={sub.id}
-                variant={
-                  filters.subcategory === sub.id ? "default" : "outline"
-                }
+                variant={filters.subcategory === sub.id ? "default" : "outline"}
                 className="cursor-pointer px-4 py-2"
-                onClick={() => setSearchParams((prev) => { prev.set('subcategory', sub.id); return prev; })}
+                onClick={() =>
+                  setSearchParams((prev) => {
+                    prev.set("subcategory", sub.id);
+                    return prev;
+                  })
+                }
               >
                 {sub.name} {`(${sub.products_count})`}
               </Badge>
@@ -113,7 +139,13 @@ const CategoriesPage = () => {
 
           <Select
             value={`${filters.sortBy}:${filters.sortOrder}`}
-            onValueChange={(value) => setSearchParams((prev) => { prev.set('sortBy', value.split(':')[0]); prev.set('sortOrder', value.split(':')[1]); return prev; })}
+            onValueChange={(value) =>
+              setSearchParams((prev) => {
+                prev.set("sortBy", value.split(":")[0]);
+                prev.set("sortOrder", value.split(":")[1]);
+                return prev;
+              })
+            }
           >
             <SelectTrigger className="w-40">
               <SelectValue placeholder="Sort by" />
@@ -129,10 +161,16 @@ const CategoriesPage = () => {
         </div>
 
         {/* Products Grid */}
-          <ProductGrid products={products ?? []} isLoading={isProductsLoading} isError={isProductsError} errorMessage={productsErrorMessage} columns={4} />
+        <ProductGrid
+          products={products ?? []}
+          isLoading={isProductsLoading}
+          isError={isProductsError}
+          errorMessage={productsErrorMessage}
+          columns={4}
+        />
       </div>
-    </div> 
-  )
-}
+    </div>
+  );
+};
 
-export default CategoriesPage
+export default CategoriesPage;
