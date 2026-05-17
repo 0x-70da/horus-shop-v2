@@ -1,8 +1,8 @@
 // features/orders/orders.page.tsx
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Loading } from "@/components/ui/loading";
 import { useOrders } from "./orders.hooks";
+import { OrdersSkeleton } from "./components/OrdersSkeleton";
 import type { OrderStatus } from "./orders.types";
 
 const STATUS_TABS: { label: string; value: OrderStatus | undefined }[] = [
@@ -55,7 +55,7 @@ export default function OrdersPage() {
       </div>
 
       {/* States */}
-      {isOrdersLoading && <Loading />}
+      {isOrdersLoading && <OrdersSkeleton />}
       {isOrdersError   && <p className="text-center py-10 text-destructive">Failed to load orders</p>}
       {!isOrdersLoading && !isOrdersError && orders.length === 0 && (
         <p className="text-center py-10 text-muted-foreground">No orders found</p>

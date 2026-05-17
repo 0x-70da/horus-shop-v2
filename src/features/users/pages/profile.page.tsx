@@ -1,11 +1,11 @@
 import { User, MapPin, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Loading } from "@/components/ui/loading";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/features/auth/auth.hooks";
 import { useUser } from "../users.hooks";
 import { useAddresses } from "@/features/addresses/addresses.hooks";
+import { ProfileSkeleton } from "../components/ProfileSkeleton";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -26,7 +26,7 @@ const ProfilePage = () => {
       </div>
     );
 
-  if (isGetProfileLoading) return <Loading />;
+  if (isGetProfileLoading) return <ProfileSkeleton />;
 
   return (
     <div className="container py-8">

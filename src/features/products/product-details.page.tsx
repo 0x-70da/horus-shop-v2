@@ -7,13 +7,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { useProducts } from "./products.hooks"
-import { Loading } from "@/components/ui/loading"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { useState } from "react"
 import type { ProductVariant } from "./products.types"
 import { useCart } from "../cart/cart.hooks"
 import { useWishlist } from "../wishlist/wishlist.hooks"
+import { ProductDetailsSkeleton } from "./components/ProductDetailsSkeleton"
 
 const ProductDetailsPage = () => {
   const { id } = useParams<{id: string}>();
@@ -33,7 +33,7 @@ const ProductDetailsPage = () => {
       }
     };
 
-    if (isProductLoading) return <Loading />;
+    if (isProductLoading) return <ProductDetailsSkeleton />;
 
     if (!product) {
         return (
