@@ -4,13 +4,16 @@ import { Separator } from "@/components/ui/separator"
 import { motion } from "framer-motion"
 import { ArrowRight, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react"
 import { Link } from "react-router-dom"
+import { Loading } from "@/components/ui/loading"
 import { useCart } from "./cart.hooks"
 
 const CartPage = () => {
-    const {updateCartItem, removeFromCart, subtotal, items } = useCart();
+    const { updateCartItem, removeFromCart, subtotal, items, isCartLoading } = useCart();
     const shipping = subtotal > 100 ? 0 : 10;
     const tax = subtotal * 0.07;
     const finalTotal = subtotal + shipping + tax;
+
+    if (isCartLoading) return <Loading />;
 
     if (items?.length === 0) {
     return (

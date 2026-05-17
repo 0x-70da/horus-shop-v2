@@ -1,50 +1,76 @@
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
-import { AnimatePresence, motion } from "framer-motion"
-import { Grid3X3, LayoutList, SlidersHorizontal, X } from "lucide-react"
-import ProductGrid from "./components/ProductGrid"
-import { useProducts } from "./products.hooks"
-import { useSearchParams } from "react-router-dom"
-import type { ProductsFilter, SortBy, SortOptions } from "./products.types"
-import { useState } from "react"
-import ProductsFilterContent from "./components/ProductsFiltersContent"
-import { useBrands, useCategories } from "../categories/categories.hooks"
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { AnimatePresence, motion } from "framer-motion";
+import { Grid3X3, LayoutList, SlidersHorizontal, X } from "lucide-react";
+import { Loading } from "@/components/ui/loading";
+import ProductGrid from "./components/ProductGrid";
+import { useProducts } from "./products.hooks";
+import { useSearchParams } from "react-router-dom";
+import type { ProductsFilter, SortBy, SortOptions } from "./products.types";
+import { useState } from "react";
+import ProductsFilterContent from "./components/ProductsFiltersContent";
+import { useBrands, useCategories } from "../categories/categories.hooks";
 
 const ProductsPage = () => {
-      const [ searchParams, setSearchParams ] = useSearchParams();
-      const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-      const [isFilterOpen, setIsFilterOpen] = useState(false);
-      
-      const filters: ProductsFilter = {
-        category: searchParams.get('category') ?? undefined,
-        subcategory: searchParams.get('subcategory') ?? undefined,
-        brand: searchParams.get('brand') ?? undefined,
-        sortBy: searchParams.get('sortBy') as SortBy ?? 'newest',
-        minPrice: searchParams.get('minPrice') ? parseInt(searchParams.get('minPrice')!) : undefined,
-        maxPrice: searchParams.get('maxPrice') ? parseInt(searchParams.get('maxPrice')!) : undefined,
-        inStock: searchParams.get('inStock') as "true" | "false" ?? undefined,
-        sortOrder: searchParams.get('sortOrder') as SortOptions ?? 'desc',
-        page: searchParams.get('page') ? parseInt(searchParams.get('page')!) : 1,
-        limit: searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : 20,
-      }
-  
-      const { products } = useProducts("", filters);
-      const { categories } = useCategories();
-      const { brands } = useBrands();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-      const activeFiltersCount = searchParams.getAll("category").length + searchParams.getAll("brand").length + (searchParams.get("minPrice") ? 1 : 0) + (searchParams.get("maxPrice") ? 1 : 0) + (searchParams.get("inStock") ? 1 : 0);
+  const filters: ProductsFilter = {
+    category: searchParams.get("category") ?? undefined,
+    subcategory: searchParams.get("subcategory") ?? undefined,
+    brand: searchParams.get("brand") ?? undefined,
+    sortBy: (searchParams.get("sortBy") as SortBy) ?? "newest",
+    minPrice: searchParams.get("minPrice")
+      ? parseInt(searchParams.get("minPrice")!)
+      : undefined,
+    maxPrice: searchParams.get("maxPrice")
+      ? parseInt(searchParams.get("maxPrice")!)
+      : undefined,
+    inStock: (searchParams.get("inStock") as "true" | "false") ?? undefined,
+    sortOrder: (searchParams.get("sortOrder") as SortOptions) ?? "desc",
+    page: searchParams.get("page") ? parseInt(searchParams.get("page")!) : 1,
+    limit: searchParams.get("limit")
+      ? parseInt(searchParams.get("limit")!)
+      : 20,
+  };
 
-      const clearFilters= () => {
-        searchParams.delete("category");
-        searchParams.delete("subcategory");
-        searchParams.delete("brand");
-        searchParams.delete("minPrice");
-        searchParams.delete("maxPrice");
-        searchParams.delete("inStock");
-        setSearchParams(searchParams);
-      }
+      const { products, isProductsLoading } = useProducts("", filters);
+  const { categories } = useCategories();
+  const { brands } = useBrands();
+
+  const activeFiltersCount =
+    searchParams.getAll("category").length +
+    searchParams.getAll("brand").length +
+    (searchParams.get("minPrice") ? 1 : 0) +
+    (searchParams.get("maxPrice") ? 1 : 0) +
+    (searchParams.get("inStock") ? 1 : 0);
+
+  const clearFilters = () => {
+    searchParams.delete("category");
+    searchParams.delete("subcategory");
+    searchParams.delete("brand");
+    searchParams.delete("minPrice");
+    searchParams.delete("maxPrice");
+    searchParams.delete("inStock");
+    setSearchParams(searchParams);
+  };
+
+  if (isProductsLoading) return <Loading />;
 
   return (
     <div className="container py-8">
@@ -66,7 +92,10 @@ const ProductsPage = () => {
                 <Badge variant="secondary">{activeFiltersCount} active</Badge>
               )}
             </div>
-            <ProductsFilterContent activeFiltersCount={activeFiltersCount} clearFilters={clearFilters} />
+            <ProductsFilterContent
+              activeFiltersCount={activeFiltersCount}
+              clearFilters={clearFilters}
+            />
           </div>
         </aside>
 
@@ -93,7 +122,10 @@ const ProductsPage = () => {
                     <SheetTitle>Filters</SheetTitle>
                   </SheetHeader>
                   <div className="mt-6">
-                    <ProductsFilterContent activeFiltersCount={activeFiltersCount} clearFilters={clearFilters} />
+                    <ProductsFilterContent
+                      activeFiltersCount={activeFiltersCount}
+                      clearFilters={clearFilters}
+                    />
                   </div>
                 </SheetContent>
               </Sheet>
@@ -110,7 +142,12 @@ const ProductsPage = () => {
                     <Badge
                       variant="secondary"
                       className="cursor-pointer gap-1"
-                      onClick={() => setSearchParams((prev) => { prev.delete("category"); return prev; })}
+                      onClick={() =>
+                        setSearchParams((prev) => {
+                          prev.delete("category");
+                          return prev;
+                        })
+                      }
                     >
                       {categories.find((c) => c.id === cat)?.name}
                       <X className="h-3 w-3" />
@@ -127,7 +164,12 @@ const ProductsPage = () => {
                     <Badge
                       variant="secondary"
                       className="cursor-pointer gap-1"
-                      onClick={() => setSearchParams((prev) => { prev.delete("brand"); return prev; })}
+                      onClick={() =>
+                        setSearchParams((prev) => {
+                          prev.delete("brand");
+                          return prev;
+                        })
+                      }
                     >
                       {brands.find((b) => b.id === brand)?.name}
                       <X className="h-3 w-3" />
@@ -140,12 +182,14 @@ const ProductsPage = () => {
             <div className="flex items-center gap-2">
               {/* Sort */}
               <Select
-                value={`${searchParams.get("sortBy") ?? 'popularity'}-${searchParams.get("sortOrder") ?? 'desc'}`}
-                onValueChange={(value) => setSearchParams((prev) => {
-                  prev.set("sortBy", value.split("-")[0]);
-                  prev.set("sortOrder", value.split("-")[1]);
-                  return prev;
-                })}
+                value={`${searchParams.get("sortBy") ?? "popularity"}-${searchParams.get("sortOrder") ?? "desc"}`}
+                onValueChange={(value) =>
+                  setSearchParams((prev) => {
+                    prev.set("sortBy", value.split("-")[0]);
+                    prev.set("sortOrder", value.split("-")[1]);
+                    return prev;
+                  })
+                }
               >
                 <SelectTrigger className="w-40">
                   <SelectValue placeholder="Sort by" />
@@ -162,18 +206,18 @@ const ProductsPage = () => {
               {/* View Toggle */}
               <div className="hidden items-center gap-1 rounded-lg border p-1 sm:flex">
                 <Button
-                  variant={viewMode === 'grid' ? 'secondary' : 'ghost'}
+                  variant={viewMode === "grid" ? "secondary" : "ghost"}
                   size="icon"
                   className="h-8 w-8"
-                  onClick={() => setViewMode('grid')}
+                  onClick={() => setViewMode("grid")}
                 >
                   <Grid3X3 className="h-4 w-4" />
                 </Button>
                 <Button
-                  variant={viewMode === 'list' ? 'secondary' : 'ghost'}
+                  variant={viewMode === "list" ? "secondary" : "ghost"}
                   size="icon"
                   className="h-8 w-8"
-                  onClick={() => setViewMode('list')}
+                  onClick={() => setViewMode("list")}
                 >
                   <LayoutList className="h-4 w-4" />
                 </Button>
@@ -184,12 +228,13 @@ const ProductsPage = () => {
           {/* Products */}
           <ProductGrid
             products={products}
-            columns={viewMode === 'list' ? 2 : 4}
+            columns={viewMode === "list" ? 2 : 4}
           />
         </main>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ProductsPage
+export default ProductsPage;
+

@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { useProducts } from "./products.hooks"
+import { Loading } from "@/components/ui/loading"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { useState } from "react"
@@ -19,7 +20,7 @@ const ProductDetailsPage = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
   const [quantity, setQuantity] = useState(1);
-  const { product } = useProducts(id!);
+  const { product, isProductLoading } = useProducts(id!);
   const { addToCart } = useCart();
   const { wishlistItems, addToWishlist, removeFromWishlist } = useWishlist();
   const isInWishlist = wishlistItems.some(item => item.productId === product?.id);
@@ -31,6 +32,8 @@ const ProductDetailsPage = () => {
         addToWishlist({ itemId: product?.id ?? '' });
       }
     };
+
+    if (isProductLoading) return <Loading />;
 
     if (!product) {
         return (

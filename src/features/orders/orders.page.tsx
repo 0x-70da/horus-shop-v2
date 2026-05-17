@@ -1,6 +1,7 @@
 // features/orders/orders.page.tsx
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { Loading } from "@/components/ui/loading";
 import { useOrders } from "./orders.hooks";
 import type { OrderStatus } from "./orders.types";
 
@@ -54,7 +55,7 @@ export default function OrdersPage() {
       </div>
 
       {/* States */}
-      {isOrdersLoading && <p className="text-center py-10 text-muted-foreground">Loading...</p>}
+      {isOrdersLoading && <Loading />}
       {isOrdersError   && <p className="text-center py-10 text-destructive">Failed to load orders</p>}
       {!isOrdersLoading && !isOrdersError && orders.length === 0 && (
         <p className="text-center py-10 text-muted-foreground">No orders found</p>

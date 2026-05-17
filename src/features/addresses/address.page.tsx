@@ -1,5 +1,6 @@
 // features/addresses/addresses.page.tsx
 import { useState } from "react";
+import { Loading } from "@/components/ui/loading";
 import { useAddresses } from "./addresses.hooks";
 import AddressForm from "./components/address-form";
 import type { Address, CreateAddressBody } from "./addresses.types";
@@ -42,9 +43,7 @@ export default function AddressesPage() {
       )}
 
       {/* Loading */}
-      {isAddressesLoading && (
-        <p className="text-center py-10 text-muted-foreground">Loading...</p>
-      )}
+      {isAddressesLoading && <Loading />}
 
       {/* Empty */}
       {!isAddressesLoading && addresses.length === 0 && !showForm && (

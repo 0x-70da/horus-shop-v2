@@ -1,5 +1,6 @@
 import { User, MapPin, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Loading } from "@/components/ui/loading";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/features/auth/auth.hooks";
@@ -9,7 +10,7 @@ import { useAddresses } from "@/features/addresses/addresses.hooks";
 const ProfilePage = () => {
   const navigate = useNavigate();
   const { isAuthenticated, logout } = useAuth();
-  const { getProfileData: user } = useUser();
+  const { getProfileData: user, isGetProfileLoading } = useUser();
   const { addresses } = useAddresses();
 
   if (!isAuthenticated)
@@ -24,6 +25,8 @@ const ProfilePage = () => {
         </Link>
       </div>
     );
+
+  if (isGetProfileLoading) return <Loading />;
 
   return (
     <div className="container py-8">
