@@ -48,7 +48,7 @@ const ProductsPage = () => {
       : 20,
   };
 
-  const { products } = useProducts("", filters);
+  const { products, isProductsLoading, isProductsError, productsErrorMessage } = useProducts("", filters);
   const { categories } = useCategories();
   const { brands } = useBrands();
 
@@ -226,6 +226,9 @@ const ProductsPage = () => {
           <ProductGrid
             products={products}
             columns={viewMode === "list" ? 2 : 4}
+            isLoading={isProductsLoading}
+            isError={isProductsError}
+            errorMessage={productsErrorMessage}
           />
         </main>
       </div>

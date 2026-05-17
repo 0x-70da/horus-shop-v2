@@ -1,13 +1,16 @@
 import { Heart, ShoppingCart, Trash2 } from "lucide-react";
 import { useWishlist } from "./wishlist.hooks";
+import { WishlistSkeleton } from "./components/WishlistSkeleton";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useCart } from "../cart/cart.hooks";
 
 const WishlistPage = () => {
-  const { wishlistItems, removeFromWishlist } = useWishlist();
+  const { wishlistItems, removeFromWishlist, isWishlistItemsLoading } = useWishlist();
   const { addToCart } = useCart();
+
+  if (isWishlistItemsLoading) return <WishlistSkeleton />;
 
   if (!wishlistItems.length) {
     return (

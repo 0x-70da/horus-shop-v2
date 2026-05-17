@@ -1,5 +1,6 @@
 // features/addresses/addresses.page.tsx
 import { useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useAddresses } from "./addresses.hooks";
 import AddressForm from "./components/address-form";
 import type { Address, CreateAddressBody } from "./addresses.types";
@@ -49,7 +50,24 @@ export default function AddressesPage() {
 
       {/* Loading */}
       {isAddressesLoading && (
-        <p className="text-center py-10 text-muted-foreground">Loading...</p>
+        <div className="space-y-4">
+          {Array.from({ length: 2 }).map((_, i) => (
+            <div key={i} className="border rounded-lg p-4 space-y-3">
+              <div className="flex items-start justify-between">
+                <div className="space-y-1">
+                  <Skeleton className="h-5 w-40" />
+                  <Skeleton className="h-4 w-56" />
+                  <Skeleton className="h-4 w-48" />
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Skeleton className="h-8 w-16 rounded" />
+                <Skeleton className="h-8 w-24 rounded" />
+                <Skeleton className="h-8 w-16 rounded" />
+              </div>
+            </div>
+          ))}
+        </div>
       )}
 
       {/* Empty */}

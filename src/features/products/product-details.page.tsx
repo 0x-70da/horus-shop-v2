@@ -26,6 +26,7 @@ import { useState } from "react";
 import type { ProductVariant } from "./products.types";
 import { useCart } from "../cart/cart.hooks";
 import { useWishlist } from "../wishlist/wishlist.hooks";
+import { ProductDetailsSkeleton } from "./components/ProductDetailsSkeleton";
 
 const ProductDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -34,7 +35,7 @@ const ProductDetailsPage = () => {
     null,
   );
   const [quantity, setQuantity] = useState(1);
-  const { product } = useProducts(id!);
+  const { product, isProductLoading } = useProducts(id!);
   const { addToCart } = useCart();
   const { wishlistItems, addToWishlist, removeFromWishlist } = useWishlist();
   const isInWishlist = wishlistItems.some(
@@ -52,6 +53,8 @@ const ProductDetailsPage = () => {
       addToWishlist({ itemId: product?.id ?? "" });
     }
   };
+
+  if (isProductLoading) return <ProductDetailsSkeleton />;
 
   if (!product) {
     return (

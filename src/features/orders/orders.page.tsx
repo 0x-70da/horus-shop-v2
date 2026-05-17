@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useOrders } from "./orders.hooks";
+import { OrdersSkeleton } from "./components/OrdersSkeleton";
 import type { OrderStatus } from "./orders.types";
 
 const STATUS_TABS: { label: string; value: OrderStatus | undefined }[] = [
@@ -59,9 +60,7 @@ export default function OrdersPage() {
       </div>
 
       {/* States */}
-      {isOrdersLoading && (
-        <p className="text-center py-10 text-muted-foreground">Loading...</p>
-      )}
+      {isOrdersLoading && <OrdersSkeleton />}
       {isOrdersError && (
         <p className="text-center py-10 text-destructive">
           Failed to load orders

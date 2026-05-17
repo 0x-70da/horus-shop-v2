@@ -14,7 +14,7 @@ import { toast } from "sonner";
 
 export const useCart = () => {
   const queryClient = useQueryClient();
-  const { data, isLoading, isError, error } = useQuery<
+  const { data, isLoading: isCartLoading, isError: isCartError, error } = useQuery<
     ApiSuccess<CartResponse>,
     AxiosError<ApiError>
   >({
@@ -110,8 +110,8 @@ export const useCart = () => {
 
   return {
     items,
-    isLoading,
-    isError,
+    isCartLoading,
+    isCartError,
     getCartErrorMessage,
     getCartSuccessMessage,
     subtotal,

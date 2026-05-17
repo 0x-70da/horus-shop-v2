@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { SkeletonCard } from "@/components/ui/skeleton-card";
 import type { Product } from "../products.types";
 import ProductCard from "./ProductCard";
 
@@ -27,10 +28,10 @@ const ProductGrid = ({
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <p className="text-lg font-medium text-muted-foreground">
-          Loading products...
-        </p>
+      <div className={cn("grid gap-4 md:gap-6", gridCols[columns])}>
+        {Array.from({ length: 8 }).map((_, i) => (
+          <SkeletonCard key={i} />
+        ))}
       </div>
     );
   }
