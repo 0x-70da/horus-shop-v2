@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/sheet";
 import { AnimatePresence, motion } from "framer-motion";
 import { Grid3X3, LayoutList, SlidersHorizontal, X } from "lucide-react";
-import { Loading } from "@/components/ui/loading";
+
 import ProductGrid from "./components/ProductGrid";
 import { useProducts } from "./products.hooks";
 import { useSearchParams } from "react-router-dom";
@@ -49,7 +49,7 @@ const ProductsPage = () => {
       : 20,
   };
 
-      const { products, isProductsLoading } = useProducts("", filters);
+      const { products, isProductsLoading, isProductsError, productsErrorMessage } = useProducts("", filters);
   const { categories } = useCategories();
   const { brands } = useBrands();
 
@@ -69,8 +69,6 @@ const ProductsPage = () => {
     searchParams.delete("inStock");
     setSearchParams(searchParams);
   };
-
-  if (isProductsLoading) return <Loading />;
 
   return (
     <div className="container py-8">
@@ -229,6 +227,9 @@ const ProductsPage = () => {
           <ProductGrid
             products={products}
             columns={viewMode === "list" ? 2 : 4}
+            isLoading={isProductsLoading}
+            isError={isProductsError}
+            errorMessage={productsErrorMessage}
           />
         </main>
       </div>
