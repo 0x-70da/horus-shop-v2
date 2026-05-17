@@ -1,4 +1,4 @@
-import { Skeleton } from "./skeleton"
+import { Skeleton } from "./skeleton";
 
 export function SkeletonCard() {
   return (
@@ -8,5 +8,5 @@ export function SkeletonCard() {
       <Skeleton className="h-4 w-1/2" />
       <Skeleton className="h-4 w-1/4" />
     </div>
-  )
+  );
 }

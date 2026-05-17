@@ -48,7 +48,8 @@ const ProductsPage = () => {
       : 20,
   };
 
-  const { products, isProductsLoading, isProductsError, productsErrorMessage } = useProducts("", filters);
+  const { products, isProductsLoading, isProductsError, productsErrorMessage } =
+    useProducts("", filters);
   const { categories } = useCategories();
   const { brands } = useBrands();
 

@@ -8,7 +8,8 @@ import { useCart } from "./cart.hooks";
 import { CartSkeleton } from "./components/CartSkeleton";
 
 const CartPage = () => {
-  const { updateCartItem, removeFromCart, subtotal, items, isCartLoading } = useCart();
+  const { updateCartItem, removeFromCart, subtotal, items, isCartLoading } =
+    useCart();
   const shipping = subtotal > 100 ? 0 : 10;
   const tax = subtotal * 0.07;
   const finalTotal = subtotal + shipping + tax;

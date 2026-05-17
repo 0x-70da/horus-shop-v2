@@ -7,7 +7,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useCart } from "../cart/cart.hooks";
 
 const WishlistPage = () => {
-  const { wishlistItems, removeFromWishlist, isWishlistItemsLoading } = useWishlist();
+  const { wishlistItems, removeFromWishlist, isWishlistItemsLoading } =
+    useWishlist();
   const { addToCart } = useCart();
 
   if (isWishlistItemsLoading) return <WishlistSkeleton />;
