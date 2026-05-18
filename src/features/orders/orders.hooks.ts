@@ -31,12 +31,7 @@ export const useOrders = (
     isLoading: isOrdersLoading,
     refetch: refetchOrders,
   } = useQuery<ApiSuccess<OrdersResponse>, AxiosError<ApiError>>({
-    queryKey: [
-      "orders",
-      params?.status ?? "all",
-      params?.page ?? 1,
-      params?.limit ?? 10,
-    ],
+    queryKey: ["orders", params?.status, params?.page, params?.limit],
     queryFn: () => getOrders(params ?? {}),
     enabled: !id,
   });
