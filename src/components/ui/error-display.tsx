@@ -22,7 +22,7 @@ export function ErrorDisplay({ message, onRetry }: ErrorDisplayProps) {
           variant="outline"
           size="sm"
           className="mt-3 gap-2"
-          onClick={onRetry}
+          onClick={() => onRetry()}
         >
           <RefreshCw className="h-4 w-4" />
           Try again
