@@ -9,6 +9,7 @@ interface ErrorDisplayProps {
 export function ErrorDisplay({ message, onRetry }: ErrorDisplayProps) {
   return (
     <div
+      data-slot="error-display"
       role="alert"
       className="flex flex-col items-center justify-center py-10 text-center"
     >
