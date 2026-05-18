@@ -111,7 +111,6 @@ export default function CheckoutPage() {
         state: { newOrder: true },
       });
     } catch {
-      toast.error("Failed to place order. Please try again.");
     }
   };
 
