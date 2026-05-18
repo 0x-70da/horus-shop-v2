@@ -12,14 +12,19 @@ import type { PaymentMethod } from "./orders.types";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ErrorDisplay } from "@/components/ui/error-display";
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
 
   const { items, subtotal = 0 } = useCart();
   const { addresses } = useAddresses();
-  const { shippingMethods, isShippingLoading, isShippingError } =
-    useShippingMethods();
+  const {
+    shippingMethods,
+    isShippingLoading,
+    isShippingError,
+    refetchShippingMethods,
+  } = useShippingMethods();
 
   const { createOrder, isCreateOrderLoading: isPlacingOrder } = useOrders();
   const { validatePromo, isValidatingPromo } = useValidatePromoCode();
@@ -181,9 +186,10 @@ export default function CheckoutPage() {
                 ))}
               </div>
             ) : isShippingError ? (
-              <p className="text-sm text-destructive">
-                Failed to load shipping options. Please try again.
-              </p>
+              <ErrorDisplay
+                message="Failed to load shipping options. Please try again."
+                onRetry={refetchShippingMethods}
+              />
             ) : (
               <div className="space-y-2">
                 {shippingMethods
@@ -249,11 +255,20 @@ export default function CheckoutPage() {
                     checked={paymentMethod === m}
                     onChange={() => setPaymentMethod(m)}
                   />
-                  <span className="text-sm font-medium capitalize">
-                    {m === "credit_card" && "Credit Card (Stripe)"}
-                    {m === "cash_on_delivery" && "Cash on Delivery"}
-                    {m === "vodafone_cash" && "Vodafone Cash"}
-                  </span>
+                  <div className="text-sm">
+                    <p className="font-medium">
+                      {m === "credit_card" && "Credit Card"}
+                      {m === "cash_on_delivery" && "Cash on Delivery"}
+                      {m === "vodafone_cash" && "Vodafone Cash"}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {m === "credit_card" && "Pay securely with Stripe"}
+                      {m === "cash_on_delivery" &&
+                        "Pay when your order arrives at your doorstep"}
+                      {m === "vodafone_cash" &&
+                        `Send payment to ${import.meta.env.VITE_VODAFONE_CASH_NUMBER ?? "01000000000"}`}
+                    </p>
+                  </div>
                 </label>
               ))}
             </div>
