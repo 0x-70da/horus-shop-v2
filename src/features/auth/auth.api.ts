@@ -63,8 +63,7 @@ export const verifyCodeOrResetToken = async (
   const { code, token } = verifyData;
   const { data } = await api.post<ApiResponse<{ resetToken: string }>>(
     "/auth/verify",
-    { code },
-    { params: { token } },
+    token ? { token } : { code },
   );
 
   if (!data.success) {
