@@ -18,11 +18,8 @@ export default function CheckoutPage() {
 
   const { items, subtotal = 0 } = useCart();
   const { addresses } = useAddresses();
-  const {
-    shippingMethods,
-    isShippingLoading,
-    isShippingError,
-  } = useShippingMethods();
+  const { shippingMethods, isShippingLoading, isShippingError } =
+    useShippingMethods();
 
   const { createOrder, isCreateOrderLoading: isPlacingOrder } = useOrders();
   const { validatePromo, isValidatingPromo } = useValidatePromoCode();
@@ -168,7 +165,12 @@ export default function CheckoutPage() {
           <section className="border rounded-lg p-4">
             <h2 className="font-semibold mb-3">Shipping Method</h2>
             {isShippingLoading ? (
-              <div className="space-y-2" role="status" aria-live="polite" aria-busy="true">
+              <div
+                className="space-y-2"
+                role="status"
+                aria-live="polite"
+                aria-busy="true"
+              >
                 <span className="sr-only">Loading shipping methods...</span>
                 {[1, 2, 3].map((i) => (
                   <Skeleton key={i} className="h-16 w-full rounded-lg" />
@@ -218,6 +220,7 @@ export default function CheckoutPage() {
                   })}
               </div>
             )}
+          </section>
 
           {/* 3. Payment Method */}
           <section className="border rounded-lg p-4">
