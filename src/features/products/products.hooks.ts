@@ -15,6 +15,7 @@ export const useProducts = (id?: string, filters?: ProductsFilter) => {
     isLoading: isProductsLoading,
     isError: isProductsError,
     error: productsError,
+    refetch: refetchProducts,
   } = useQuery<ApiSuccess<ProductsResponse>, AxiosError<ApiError>>({
     queryKey: ["products", filters],
     queryFn: () => getProducts(filters),
@@ -31,6 +32,7 @@ export const useProducts = (id?: string, filters?: ProductsFilter) => {
     isLoading: isProductLoading,
     isError: isProductError,
     error: productError,
+    refetch: refetchProduct,
   } = useQuery<ApiSuccess<Product>, AxiosError<ApiError>>({
     queryKey: ["product", id],
     queryFn: () => getProductById(id!),
@@ -50,11 +52,13 @@ export const useProducts = (id?: string, filters?: ProductsFilter) => {
     isProductsError,
     productsErrorMessage,
     productsSuccessMessage,
+    refetchProducts,
     product: productData?.data,
     productVariants: productData?.data?.variants,
     isProductLoading,
     isProductError,
     productErrorMessage,
     productSuccessMessage,
+    refetchProduct,
   };
 };

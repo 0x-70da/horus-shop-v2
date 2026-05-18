@@ -3,7 +3,7 @@ import { getPromoBanners } from "./promo.api";
 import { getErrorMessage } from "@/lib/get-error-message";
 
 export const usePromoBanners = () => {
-  const { data, error, isError, isLoading } = useQuery({
+  const { data, error, isError, isLoading, refetch } = useQuery({
     queryKey: ["promo-banners"],
     queryFn: getPromoBanners,
   });
@@ -15,5 +15,6 @@ export const usePromoBanners = () => {
     errorMessage,
     successMessage,
     isLoading,
+    refetchPromoBanners: refetch,
   };
 };

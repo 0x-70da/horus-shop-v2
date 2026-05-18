@@ -18,6 +18,7 @@ export const useWishlist = () => {
     isLoading: isWishlistItemsLoading,
     isError: isWishlistItemsError,
     error: wishlistItemsError,
+    refetch: refetchWishlist,
   } = useQuery<ApiSuccess<WishlistItem[]>, AxiosError<ApiError>>({
     queryKey: ["wishlist"],
     queryFn: getWishlistItems,
@@ -43,6 +44,9 @@ export const useWishlist = () => {
       queryClient.invalidateQueries({ queryKey: ["wishlist"] });
       toast.success("Item added to wishlist!");
     },
+    onError: () => {
+      toast.error("Failed to add item to wishlist. Please try again.");
+    },
   });
 
   const addToWishlistErrorMessage = getErrorMessage(addToWishlistError);
@@ -60,6 +64,9 @@ export const useWishlist = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["wishlist"] });
     },
+    onError: () => {
+      toast.error("Failed to remove item from wishlist. Please try again.");
+    },
   });
 
   const removeFromWishlistErrorMessage = getErrorMessage(
@@ -72,6 +79,7 @@ export const useWishlist = () => {
     isWishlistItemsError,
     wishlistItemsErrorMessage,
     wishlistItemsSuccessMessage,
+    refetchWishlist,
     addToWishlist: addToWishlistMutate,
     isAddToWishlistPending,
     isAddToWishlistError,

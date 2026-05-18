@@ -15,6 +15,7 @@ import {
 import { Link, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { ErrorDisplay } from "@/components/ui/error-display";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -26,6 +27,7 @@ import { useState } from "react";
 import type { ProductVariant } from "./products.types";
 import { useCart } from "../cart/cart.hooks";
 import { useWishlist } from "../wishlist/wishlist.hooks";
+import { ProductDetailsSkeleton } from "./components/ProductDetailsSkeleton";
 
 const ProductDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -34,7 +36,13 @@ const ProductDetailsPage = () => {
     null,
   );
   const [quantity, setQuantity] = useState(1);
-  const { product } = useProducts(id!);
+  const {
+    product,
+    isProductLoading,
+    isProductError,
+    productErrorMessage,
+    refetchProduct,
+  } = useProducts(id!);
   const { addToCart } = useCart();
   const { wishlistItems, addToWishlist, removeFromWishlist } = useWishlist();
   const isInWishlist = wishlistItems.some(
@@ -52,6 +60,16 @@ const ProductDetailsPage = () => {
       addToWishlist({ itemId: product?.id ?? "" });
     }
   };
+
+  if (isProductLoading) return <ProductDetailsSkeleton />;
+
+  if (isProductError) {
+    return (
+      <div className="container py-20">
+        <ErrorDisplay message={productErrorMessage} onRetry={refetchProduct} />
+      </div>
+    );
+  }
 
   if (!product) {
     return (

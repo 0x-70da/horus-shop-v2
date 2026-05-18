@@ -1,13 +1,35 @@
 import { Heart, ShoppingCart, Trash2 } from "lucide-react";
 import { useWishlist } from "./wishlist.hooks";
+import { WishlistSkeleton } from "./components/WishlistSkeleton";
+import { ErrorDisplay } from "@/components/ui/error-display";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useCart } from "../cart/cart.hooks";
 
 const WishlistPage = () => {
-  const { wishlistItems, removeFromWishlist } = useWishlist();
+  const {
+    wishlistItems,
+    removeFromWishlist,
+    isWishlistItemsLoading,
+    isWishlistItemsError,
+    wishlistItemsErrorMessage,
+    refetchWishlist,
+  } = useWishlist();
   const { addToCart } = useCart();
+
+  if (isWishlistItemsLoading) return <WishlistSkeleton />;
+
+  if (isWishlistItemsError) {
+    return (
+      <div className="container py-20">
+        <ErrorDisplay
+          message={wishlistItemsErrorMessage}
+          onRetry={refetchWishlist}
+        />
+      </div>
+    );
+  }
 
   if (!wishlistItems.length) {
     return (

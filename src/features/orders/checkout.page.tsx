@@ -111,7 +111,6 @@ export default function CheckoutPage() {
         state: { newOrder: true },
       });
     } catch {
-      // الـ error بيتعالج في الـ hook
     }
   };
 

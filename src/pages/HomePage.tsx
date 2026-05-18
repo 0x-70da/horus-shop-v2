@@ -4,6 +4,7 @@ import { ArrowRight, ChevronRight, Zap, Star, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { ErrorDisplay } from "@/components/ui/error-display";
 import {
   useBrands,
   useCategories,
@@ -19,9 +20,14 @@ import { usePromoBanners } from "@/features/promo/promo.hooks";
 // TODO: Replace mock data imports with API calls
 
 const Home = () => {
-  const { categories } = useCategories();
-  const { products } = useProducts();
-  const { brands } = useBrands();
+  const {
+    categories,
+    isError: isCategoriesError,
+    refetchCategories,
+  } = useCategories();
+  const { products, isProductsError, productsErrorMessage, refetchProducts } =
+    useProducts();
+  const { brands, isError: isBrandsError, refetchBrands } = useBrands();
   const { promoBanners } = usePromoBanners();
   // const { flashDeals } = useFlashDeals();
   const bestSellers = products.filter((p) => p.totalSold > 100);
@@ -148,34 +154,43 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
-            {categories?.map((category, index) => (
-              <motion.div
-                key={category.id}
-                initial={false}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
-              >
-                <Link to={`/category/${category.slug}`}>
-                  <Card className="group cursor-pointer overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1">
-                    <div className="aspect-square overflow-hidden">
-                      <img
-                        src={category.image}
-                        alt={category.name}
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      />
-                    </div>
-                    <CardContent className="p-3 text-center">
-                      <h3 className="font-semibold group-hover:text-primary">
-                        {category.name}
-                      </h3>
-                      <p className="text-xs text-muted-foreground">
-                        {category.products_count} products
-                      </p>
-                    </CardContent>
-                  </Card>
-                </Link>
-              </motion.div>
-            ))}
+            {isCategoriesError ? (
+              <div className="col-span-full">
+                <ErrorDisplay
+                  message="Failed to load categories"
+                  onRetry={refetchCategories}
+                />
+              </div>
+            ) : (
+              categories?.map((category, index) => (
+                <motion.div
+                  key={category.id}
+                  initial={false}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                >
+                  <Link to={`/category/${category.id}`}>
+                    <Card className="group cursor-pointer overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1">
+                      <div className="aspect-square overflow-hidden">
+                        <img
+                          src={category.image}
+                          alt={category.name}
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        />
+                      </div>
+                      <CardContent className="p-3 text-center">
+                        <h3 className="font-semibold group-hover:text-primary">
+                          {category.name}
+                        </h3>
+                        <p className="text-xs text-muted-foreground">
+                          {category.products_count} products
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                </motion.div>
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -204,35 +219,47 @@ const Home = () => {
               </Button>
             </Link>
           </div>
-          <ProductGrid products={featuredProducts} columns={4} />{" "}
+          {isProductsError ? (
+            <ErrorDisplay
+              message={productsErrorMessage}
+              onRetry={refetchProducts}
+            />
+          ) : (
+            <ProductGrid products={featuredProducts} columns={4} />
+          )}{" "}
           {/* featured products should ideally come from a separate API endpoint, but using all products for now*/}
         </div>
       </section>
 
-      {/* Best Sellers */}
-      <section className="bg-muted/30 py-12">
-        <div className="container">
-          <div className="mb-8 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-warning/10">
-                <TrendingUp className="h-5 w-5 text-warning" />
+      {!isProductsError && (
+        <section className="bg-muted/30 py-12">
+          <div className="container">
+            <div className="mb-8 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-warning/10">
+                  <TrendingUp className="h-5 w-5 text-warning" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold md:text-3xl">
+                    Best Sellers
+                  </h2>
+                  <p className="text-muted-foreground">
+                    Most popular this week
+                  </p>
+                </div>
               </div>
-              <div>
-                <h2 className="text-2xl font-bold md:text-3xl">Best Sellers</h2>
-                <p className="text-muted-foreground">Most popular this week</p>
-              </div>
+              <Link to="/products">
+                <Button variant="ghost" className="gap-1">
+                  View All
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </Link>
             </div>
-            <Link to="/products">
-              <Button variant="ghost" className="gap-1">
-                View All
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
 
-          <ProductGrid products={bestSellers} columns={4} />
-        </div>
-      </section>
+            <ProductGrid products={bestSellers} columns={4} />
+          </div>
+        </section>
+      )}
 
       {/* Promo Banner */}
       <section className="py-12">
@@ -272,30 +299,35 @@ const Home = () => {
         </div>
       </section>
 
-      {/* New Arrivals */}
-      <section className="py-12">
-        <div className="container">
-          <div className="mb-8 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-info/10">
-                <Star className="h-5 w-5 text-info" />
+      {!isProductsError && (
+        <section className="py-12">
+          <div className="container">
+            <div className="mb-8 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-info/10">
+                  <Star className="h-5 w-5 text-info" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold md:text-3xl">
+                    New Arrivals
+                  </h2>
+                  <p className="text-muted-foreground">
+                    Fresh products just in
+                  </p>
+                </div>
               </div>
-              <div>
-                <h2 className="text-2xl font-bold md:text-3xl">New Arrivals</h2>
-                <p className="text-muted-foreground">Fresh products just in</p>
-              </div>
+              <Link to="/products">
+                <Button variant="ghost" className="gap-1">
+                  View All
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </Link>
             </div>
-            <Link to="/products">
-              <Button variant="ghost" className="gap-1">
-                View All
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
 
-          <ProductGrid products={newArrivals} columns={4} />
-        </div>
-      </section>
+            <ProductGrid products={newArrivals} columns={4} />
+          </div>
+        </section>
+      )}
 
       {/* Brands Section */}
       <section className="border-t border-border bg-muted/30 py-12">
@@ -304,14 +336,21 @@ const Home = () => {
             Trusted by Leading Brands
           </h2>
           <div className="flex flex-wrap items-center justify-center gap-8 opacity-60">
-            {brands.map((brand) => (
-              <div
-                key={brand.id}
-                className="text-2xl font-bold tracking-tight text-muted-foreground"
-              >
-                {brand.name}
-              </div>
-            ))}
+            {isBrandsError ? (
+              <ErrorDisplay
+                message="Failed to load brands"
+                onRetry={refetchBrands}
+              />
+            ) : (
+              brands.map((brand) => (
+                <div
+                  key={brand.id}
+                  className="text-2xl font-bold tracking-tight text-muted-foreground"
+                >
+                  {brand.name}
+                </div>
+              ))
+            )}
           </div>
         </div>
       </section>

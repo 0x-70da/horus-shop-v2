@@ -13,6 +13,7 @@ import type {
 } from "./addresses.types";
 import type { ApiError, ApiSuccess } from "@/types/api.types";
 import type { AxiosError } from "axios";
+import { toast } from "sonner";
 
 export const useAddresses = (addressId?: string) => {
   const queryClient = useQueryClient();
@@ -21,6 +22,7 @@ export const useAddresses = (addressId?: string) => {
     isError: isAddressesError,
     error: addressesError,
     isLoading: isAddressesLoading,
+    refetch: refetchAddresses,
   } = useQuery({
     queryKey: ["addresses"],
     queryFn: getAddresses,
@@ -38,6 +40,9 @@ export const useAddresses = (addressId?: string) => {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["addresses"] });
       },
+      onError: () => {
+        toast.error("Failed to create address. Please try again.");
+      },
     },
   );
 
@@ -53,6 +58,9 @@ export const useAddresses = (addressId?: string) => {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["addresses"] });
       },
+      onError: () => {
+        toast.error("Failed to update address. Please try again.");
+      },
     },
   );
 
@@ -67,6 +75,9 @@ export const useAddresses = (addressId?: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["addresses"] });
     },
+    onError: () => {
+      toast.error("Failed to delete address. Please try again.");
+    },
   });
 
   const {
@@ -80,6 +91,9 @@ export const useAddresses = (addressId?: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["addresses"] });
     },
+    onError: () => {
+      toast.error("Failed to set default address. Please try again.");
+    },
   });
 
   return {
@@ -87,6 +101,7 @@ export const useAddresses = (addressId?: string) => {
     isAddressesError,
     addressesError,
     isAddressesLoading,
+    refetchAddresses,
     createAddress: createAddressMutate,
     isCreatingAddress,
     isCreatingAddressError,
