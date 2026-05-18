@@ -169,7 +169,7 @@ const Home = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: index * 0.1 }}
                 >
-                  <Link to={`/category/${category.slug}`}>
+                  <Link to={`/category/${category.id}`}>
                     <Card className="group cursor-pointer overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1">
                       <div className="aspect-square overflow-hidden">
                         <img
