@@ -131,6 +131,7 @@ export const useAuth = () => {
     retry: false,
     staleTime: Infinity,
     gcTime: Infinity,
+    networkMode: "offlineFirst",
   });
 
   const {
