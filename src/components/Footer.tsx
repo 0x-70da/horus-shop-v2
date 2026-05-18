@@ -148,7 +148,7 @@ const Footer = () => {
               {categories.slice(0, 6).map((category) => (
                 <li key={category.id}>
                   <Link
-                    to={`/category/${category.slug}`}
+                    to={`/category/${category.id}`}
                     className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                   >
                     {category.name}

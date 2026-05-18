@@ -288,7 +288,7 @@ const Header = () => {
                   categories.map((category) => (
                     <Link
                       key={category.id}
-                      to={`/category/${category.slug}`}
+                      to={`/category/${category.id}`}
                       className="flex items-center gap-2 px-4 py-2 text-sm transition-colors hover:bg-accent rounded-md"
                       onClick={() => setIsMenuOpen(false)}
                     >
