@@ -9,9 +9,11 @@ import type { ApiError, ApiSuccess } from "@/types/api.types";
 import type { AxiosError } from "axios";
 import type { WishlistItem } from "./wishlist.types";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 export const useWishlist = () => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const {
     data: wishlistItems,
@@ -44,7 +46,12 @@ export const useWishlist = () => {
       queryClient.invalidateQueries({ queryKey: ["wishlist"] });
       toast.success("Item added to wishlist!");
     },
-    onError: () => {
+    onError: (error: AxiosError<ApiError>) => {
+      if (error.response?.status === 401) {
+        toast.error("Please log in to add items to your wishlist");
+        navigate("/login");
+        return;
+      }
       toast.error("Failed to add item to wishlist. Please try again.");
     },
   });

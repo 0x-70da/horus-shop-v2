@@ -11,9 +11,11 @@ import type { AxiosError } from "axios";
 import type { ApiError, ApiSuccess } from "@/types/api.types";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 export const useCart = () => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const {
     data,
     isLoading: isCartLoading,
@@ -48,7 +50,12 @@ export const useCart = () => {
       toast.success("Item added to cart!");
       queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
-    onError: () => {
+    onError: (error: AxiosError<ApiError>) => {
+      if (error.response?.status === 401) {
+        toast.error("Please log in to add items to your cart");
+        navigate("/login");
+        return;
+      }
       toast.error("Failed to add item to cart. Please try again.");
     },
   });
