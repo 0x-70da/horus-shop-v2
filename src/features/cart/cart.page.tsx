@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -7,6 +8,8 @@ import { ArrowRight, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useCart } from "./cart.hooks";
 import { CartSkeleton } from "./components/CartSkeleton";
+import { api } from "@/lib/api";
+import { useShippingMethods } from "../orders/orders.hooks";
 
 const CartPage = () => {
   const {
@@ -19,8 +22,34 @@ const CartPage = () => {
     getCartErrorMessage,
     refetchCart,
   } = useCart();
-  const shipping = subtotal > 100 ? 0 : 10;
-  const tax = subtotal * 0.07;
+
+  const { shippingMethods } = useShippingMethods();
+  const [taxRate, setTaxRate] = useState(0.14);
+
+  useEffect(() => {
+    api
+      .get("/tax?country=EG")
+      .then(({ data }) => {
+        if (data.success) setTaxRate(data.data.rate);
+      })
+      .catch(() => {});
+  }, []);
+
+  const estimatedShippingMethod = useMemo(() => {
+    const active = shippingMethods?.filter((m) => m.is_active) ?? [];
+    if (!active.length) return null;
+    return active.reduce((cheapest, method) =>
+      method.base_cost < cheapest.base_cost ? method : cheapest,
+    );
+  }, [shippingMethods]);
+
+  const shipping =
+    estimatedShippingMethod?.free_above !== null &&
+    estimatedShippingMethod?.free_above !== undefined &&
+    subtotal >= estimatedShippingMethod.free_above
+      ? 0
+      : (estimatedShippingMethod?.base_cost ?? 0);
+  const tax = parseFloat((subtotal * taxRate).toFixed(2));
   const finalTotal = subtotal + shipping + tax;
 
   if (isCartLoading) return <CartSkeleton />;
@@ -79,7 +108,7 @@ const CartPage = () => {
                   </p>
                 )}
                 <p className="text-lg font-bold">
-                  ${item.currentPrice.toLocaleString()}
+                  {item.currentPrice.toLocaleString()} EGP
                 </p>
                 <div className="mt-2 flex items-center gap-2">
                   <Button
@@ -129,7 +158,7 @@ const CartPage = () => {
           <CardContent className="space-y-4">
             <div className="flex justify-between">
               <span>Subtotal</span>
-              <span>${subtotal?.toFixed(2)}</span>
+              <span>{subtotal?.toFixed(2)} EGP</span>
             </div>
             {/* {promoDiscount > 0 && (
               <div className="flex justify-between text-success">
@@ -139,16 +168,18 @@ const CartPage = () => {
             )} */}
             <div className="flex justify-between">
               <span>Shipping</span>
-              {/* <span>{shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}</span> */}
+              <span>
+                {shipping === 0 ? "Free" : `${shipping.toFixed(2)} EGP`}
+              </span>
             </div>
             <div className="flex justify-between">
               <span>Tax</span>
-              {/* <span>${tax.toFixed(2)}</span> */}
+              <span>{tax.toFixed(2)} EGP</span>
             </div>
             <Separator />
             <div className="flex justify-between text-lg font-bold">
               <span>Total</span>
-              <span>${finalTotal.toFixed(2)}</span>
+              <span>{finalTotal.toFixed(2)} EGP</span>
             </div>
             {/* <div className="flex gap-2">
               <Input
