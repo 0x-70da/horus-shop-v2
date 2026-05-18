@@ -231,37 +231,35 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Best Sellers */}
-      <section className="bg-muted/30 py-12">
-        <div className="container">
-          <div className="mb-8 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-warning/10">
-                <TrendingUp className="h-5 w-5 text-warning" />
+      {!isProductsError && (
+        <section className="bg-muted/30 py-12">
+          <div className="container">
+            <div className="mb-8 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-warning/10">
+                  <TrendingUp className="h-5 w-5 text-warning" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold md:text-3xl">
+                    Best Sellers
+                  </h2>
+                  <p className="text-muted-foreground">
+                    Most popular this week
+                  </p>
+                </div>
               </div>
-              <div>
-                <h2 className="text-2xl font-bold md:text-3xl">Best Sellers</h2>
-                <p className="text-muted-foreground">Most popular this week</p>
-              </div>
+              <Link to="/products">
+                <Button variant="ghost" className="gap-1">
+                  View All
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </Link>
             </div>
-            <Link to="/products">
-              <Button variant="ghost" className="gap-1">
-                View All
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
 
-          {isProductsError ? (
-            <ErrorDisplay
-              message={productsErrorMessage}
-              onRetry={refetchProducts}
-            />
-          ) : (
             <ProductGrid products={bestSellers} columns={4} />
-          )}
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
 
       {/* Promo Banner */}
       <section className="py-12">
@@ -301,37 +299,35 @@ const Home = () => {
         </div>
       </section>
 
-      {/* New Arrivals */}
-      <section className="py-12">
-        <div className="container">
-          <div className="mb-8 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-info/10">
-                <Star className="h-5 w-5 text-info" />
+      {!isProductsError && (
+        <section className="py-12">
+          <div className="container">
+            <div className="mb-8 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-info/10">
+                  <Star className="h-5 w-5 text-info" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold md:text-3xl">
+                    New Arrivals
+                  </h2>
+                  <p className="text-muted-foreground">
+                    Fresh products just in
+                  </p>
+                </div>
               </div>
-              <div>
-                <h2 className="text-2xl font-bold md:text-3xl">New Arrivals</h2>
-                <p className="text-muted-foreground">Fresh products just in</p>
-              </div>
+              <Link to="/products">
+                <Button variant="ghost" className="gap-1">
+                  View All
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </Link>
             </div>
-            <Link to="/products">
-              <Button variant="ghost" className="gap-1">
-                View All
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
 
-          {isProductsError ? (
-            <ErrorDisplay
-              message={productsErrorMessage}
-              onRetry={refetchProducts}
-            />
-          ) : (
             <ProductGrid products={newArrivals} columns={4} />
-          )}
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
 
       {/* Brands Section */}
       <section className="border-t border-border bg-muted/30 py-12">
