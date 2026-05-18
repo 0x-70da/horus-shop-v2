@@ -1,3 +1,6 @@
+import { ErrorDisplay } from "@/components/ui/error-display";
+import { Skeleton } from "@/components/ui/skeleton";
+import { SkeletonCard } from "@/components/ui/skeleton-card";
 import { Badge } from "@/components/ui/badge";
 import {
   Select,
@@ -45,11 +48,29 @@ const CategoriesPage = () => {
     useProducts("", filters);
 
   if (isCategoriesLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="container py-8">
+        <Skeleton className="mb-8 h-64 w-full rounded-lg" />
+        <div className="mb-6 flex gap-2">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-8 w-24 rounded-full" />
+          ))}
+        </div>
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
+        </div>
+      </div>
+    );
   }
 
   if (isCategoriesError) {
-    return <div>Error: {categoriesErrorMessage}</div>;
+    return (
+      <div className="container py-20">
+        <ErrorDisplay message={categoriesErrorMessage} />
+      </div>
+    );
   }
 
   if (!category) {

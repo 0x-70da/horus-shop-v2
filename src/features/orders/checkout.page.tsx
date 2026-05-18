@@ -11,13 +11,20 @@ import { useCart } from "../cart/cart.hooks";
 import type { PaymentMethod } from "./orders.types";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ErrorDisplay } from "@/components/ui/error-display";
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
 
   const { items, subtotal = 0 } = useCart();
   const { addresses } = useAddresses();
-  const { shippingMethods } = useShippingMethods();
+  const {
+    shippingMethods,
+    isShippingLoading,
+    isShippingError,
+    refetchShippingMethods,
+  } = useShippingMethods();
 
   const { createOrder, isCreateOrderLoading: isPlacingOrder } = useOrders();
   const { validatePromo, isValidatingPromo } = useValidatePromoCode();
@@ -111,6 +118,7 @@ export default function CheckoutPage() {
         state: { newOrder: true },
       });
     } catch {
+      // Error toast already handled by useOrders onError
     }
   };
 
@@ -165,44 +173,63 @@ export default function CheckoutPage() {
           {/* 2. Shipping */}
           <section className="border rounded-lg p-4">
             <h2 className="font-semibold mb-3">Shipping Method</h2>
-            <div className="space-y-2">
-              {shippingMethods
-                ?.filter((m) => m.is_active)
-                .map((method) => {
-                  const isFree =
-                    method.free_above !== null &&
-                    method.free_above !== undefined &&
-                    afterDiscount >= method.free_above;
+            {isShippingLoading ? (
+              <div
+                className="space-y-2"
+                role="status"
+                aria-live="polite"
+                aria-busy="true"
+              >
+                <span className="sr-only">Loading shipping methods...</span>
+                {[1, 2, 3].map((i) => (
+                  <Skeleton key={i} className="h-16 w-full rounded-lg" />
+                ))}
+              </div>
+            ) : isShippingError ? (
+              <ErrorDisplay
+                message="Failed to load shipping options. Please try again."
+                onRetry={refetchShippingMethods}
+              />
+            ) : (
+              <div className="space-y-2">
+                {shippingMethods
+                  ?.filter((m) => m.is_active)
+                  .map((method) => {
+                    const isFree =
+                      method.free_above !== null &&
+                      method.free_above !== undefined &&
+                      afterDiscount >= method.free_above;
 
-                  return (
-                    <label
-                      key={method.id}
-                      className={`flex items-center justify-between p-3 border rounded cursor-pointer
+                    return (
+                      <label
+                        key={method.id}
+                        className={`flex items-center justify-between p-3 border rounded cursor-pointer
                       ${selectedShipping === method.id ? "border-primary bg-primary/5" : ""}`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <input
-                          type="radio"
-                          name="shipping"
-                          value={method.id}
-                          checked={selectedShipping === method.id}
-                          onChange={() => setSelectedShipping(method.id)}
-                        />
-                        <div className="text-sm">
-                          <p className="font-medium">{method.name}</p>
-                          <p className="text-muted-foreground">
-                            {method.carrier && `${method.carrier} · `}
-                            {method.estimated_days} business days
-                          </p>
+                      >
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="radio"
+                            name="shipping"
+                            value={method.id}
+                            checked={selectedShipping === method.id}
+                            onChange={() => setSelectedShipping(method.id)}
+                          />
+                          <div className="text-sm">
+                            <p className="font-medium">{method.name}</p>
+                            <p className="text-muted-foreground">
+                              {method.carrier && `${method.carrier} · `}
+                              {method.estimated_days} business days
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                      <span className="text-sm font-medium">
-                        {isFree ? "Free" : `${method.base_cost} EGP`}
-                      </span>
-                    </label>
-                  );
-                })}
-            </div>
+                        <span className="text-sm font-medium">
+                          {isFree ? "Free" : `${method.base_cost} EGP`}
+                        </span>
+                      </label>
+                    );
+                  })}
+              </div>
+            )}
           </section>
 
           {/* 3. Payment Method */}
@@ -228,11 +255,20 @@ export default function CheckoutPage() {
                     checked={paymentMethod === m}
                     onChange={() => setPaymentMethod(m)}
                   />
-                  <span className="text-sm font-medium capitalize">
-                    {m === "credit_card" && "Credit Card (Stripe)"}
-                    {m === "cash_on_delivery" && "Cash on Delivery"}
-                    {m === "vodafone_cash" && "Vodafone Cash"}
-                  </span>
+                  <div className="text-sm">
+                    <p className="font-medium">
+                      {m === "credit_card" && "Credit Card"}
+                      {m === "cash_on_delivery" && "Cash on Delivery"}
+                      {m === "vodafone_cash" && "Vodafone Cash"}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {m === "credit_card" && "Pay securely with Stripe"}
+                      {m === "cash_on_delivery" &&
+                        "Pay when your order arrives at your doorstep"}
+                      {m === "vodafone_cash" &&
+                        `Send payment to ${import.meta.env.VITE_VODAFONE_CASH_NUMBER ?? "01000000000"}`}
+                    </p>
+                  </div>
                 </label>
               ))}
             </div>

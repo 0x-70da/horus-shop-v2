@@ -1,4 +1,5 @@
 import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
+import { toast } from "sonner";
 
 let isRefreshing = false;
 let queue: Array<{ resolve: () => void; reject: (error: unknown) => void }> =
@@ -14,7 +15,10 @@ export const api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  timeout: 5000,
+  timeout: (() => {
+    const raw = parseInt(import.meta.env.VITE_API_TIMEOUT ?? "", 10);
+    return Number.isFinite(raw) && raw > 0 ? raw : 15000;
+  })(),
   withCredentials: true,
 });
 if (!import.meta.env.VITE_API_BASE_URL) {
@@ -36,9 +40,18 @@ api.interceptors.response.use(
     const isAuthCall = originalRequest.url?.startsWith("/auth");
     const isMeCall = originalRequest.url === "/auth/me";
     const isRefreshCall = originalRequest.url === "/auth/refresh";
+    const isCartCall = originalRequest.url?.startsWith("/cart");
+    const isWishlistCall = originalRequest.url?.startsWith("/wishlist");
+    const isCartOrWishlistCall = isCartCall || isWishlistCall;
     const hasRetried = originalRequest._retry;
 
-    if (!is401 || (isAuthCall && !isMeCall && !isRefreshCall) || hasRetried) {
+    // Never try to refresh in response to a refresh call failing.
+    // Otherwise the request can get stuck behind the refresh queue.
+    if (isRefreshCall) {
+      return Promise.reject(error);
+    }
+
+    if (!is401 || (isAuthCall && !isMeCall) || hasRetried) {
       return Promise.reject(error);
     }
 
@@ -59,6 +72,21 @@ api.interceptors.response.use(
       return api(originalRequest);
     } catch (refreshError) {
       processQueue(refreshError);
+
+      // Special-case: `/auth/me` is used to detect auth state.
+      // When the user is simply logged out, we should not treat it as an
+      // "expired session" or force navigation.
+      if (isMeCall) {
+        return Promise.reject(error);
+      }
+
+      // Special-case: let cart/wishlist hooks show their own
+      // "Please log in" toast + router navigation.
+      if (isCartOrWishlistCall) {
+        return Promise.reject(error);
+      }
+
+      toast.error("Session expired. Please log in again.");
       if (window.location.pathname !== "/login") {
         window.location.href = "/login";
       }

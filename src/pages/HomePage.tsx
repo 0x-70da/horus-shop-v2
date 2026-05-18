@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ErrorDisplay } from "@/components/ui/error-display";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   useBrands,
   useCategories,
@@ -13,23 +14,27 @@ import ProductGrid from "@/features/products/components/ProductGrid";
 import { useProducts } from "@/features/products/products.hooks";
 import { usePromoBanners } from "@/features/promo/promo.hooks";
 
-// ============================================
-// Home Page
-// ============================================
-// Main landing page with hero, categories, featured products, etc.
-// TODO: Replace mock data imports with API calls
-
 const Home = () => {
   const {
     categories,
+    isLoading: isCategoriesLoading,
     isError: isCategoriesError,
     refetchCategories,
   } = useCategories();
-  const { products, isProductsError, productsErrorMessage, refetchProducts } =
-    useProducts();
-  const { brands, isError: isBrandsError, refetchBrands } = useBrands();
+  const {
+    products,
+    isProductsLoading,
+    isProductsError,
+    productsErrorMessage,
+    refetchProducts,
+  } = useProducts();
+  const {
+    brands,
+    isLoading: isBrandsLoading,
+    isError: isBrandsError,
+    refetchBrands,
+  } = useBrands();
   const { promoBanners } = usePromoBanners();
-  // const { flashDeals } = useFlashDeals();
   const bestSellers = products.filter((p) => p.totalSold > 100);
   const newArrivals = [...products]
     .sort(
@@ -39,13 +44,19 @@ const Home = () => {
     .slice(0, 8);
   const featuredProducts = products.filter((p) => p.rating >= 4.5).slice(0, 8);
 
+  const smartphoneCategoryId = categories.find(
+    (c) => c.name.toLowerCase().includes("phone") || c.slug === "smartphones",
+  )?.id;
+  const audioCategoryId = categories.find((c) =>
+    c.name.toLowerCase().includes("audio"),
+  )?.id;
+  const heroProduct = featuredProducts[0];
+
   return (
     <div className="flex flex-col">
-      {/* Hero Section */}
       <section className="relative overflow-hidden bg-linear-to-br from-background via-background to-primary/5">
         <div className="container py-12 md:py-20">
           <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
-            {/* Hero Content */}
             <motion.div
               initial={false}
               animate={{ opacity: 1, x: 0 }}
@@ -70,14 +81,15 @@ const Home = () => {
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </Link>
-                <Link to="/category/smartphones">
-                  <Button size="lg" variant="outline">
-                    Explore Phones
-                  </Button>
-                </Link>
+                {smartphoneCategoryId && (
+                  <Link to={`/category/${smartphoneCategoryId}`}>
+                    <Button size="lg" variant="outline">
+                      Explore Phones
+                    </Button>
+                  </Link>
+                )}
               </div>
 
-              {/* Trust badges */}
               <div className="mt-8 flex items-center gap-6 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
                   <Star className="h-4 w-4 fill-warning text-warning" />
@@ -92,7 +104,6 @@ const Home = () => {
               </div>
             </motion.div>
 
-            {/* Hero Image */}
             <motion.div
               initial={false}
               animate={{ opacity: 1, x: 0 }}
@@ -105,7 +116,6 @@ const Home = () => {
                   alt="Featured product"
                   className="h-full w-full object-cover"
                 />
-                {/* Floating product card */}
                 <motion.div
                   initial={false}
                   animate={{ opacity: 1, y: 0 }}
@@ -115,17 +125,22 @@ const Home = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-xs text-muted-foreground">Featured</p>
-                      <p className="font-semibold">iPhone 15 Pro Max</p>
-                      <p className="text-lg font-bold text-primary">$1,199</p>
+                      <p className="font-semibold">
+                        {heroProduct?.name ?? "Featured Product"}
+                      </p>
+                      <p className="text-lg font-bold text-primary">
+                        {heroProduct ? `$${heroProduct.price}` : ""}
+                      </p>
                     </div>
-                    <Link to="/products/iphone-15-pro-max">
-                      <Button size="sm">View</Button>
-                    </Link>
+                    {heroProduct?.id && (
+                      <Link to={`/products/${heroProduct.id}`}>
+                        <Button size="sm">View</Button>
+                      </Link>
+                    )}
                   </div>
                 </motion.div>
               </div>
 
-              {/* Decorative elements */}
               <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-primary/10 blur-2xl" />
               <div className="absolute -bottom-8 -left-8 h-32 w-32 rounded-full bg-primary/5 blur-3xl" />
             </motion.div>
@@ -133,7 +148,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Categories Section */}
       <section className="border-y border-border bg-muted/30 py-12">
         <div className="container">
           <div className="mb-8 flex items-center justify-between">
@@ -154,7 +168,15 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
-            {isCategoriesError ? (
+            {isCategoriesLoading ? (
+              Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="space-y-3">
+                  <Skeleton className="aspect-square w-full rounded-lg" />
+                  <Skeleton className="h-4 w-3/4 mx-auto" />
+                  <Skeleton className="h-3 w-1/2 mx-auto" />
+                </div>
+              ))
+            ) : isCategoriesError ? (
               <div className="col-span-full">
                 <ErrorDisplay
                   message="Failed to load categories"
@@ -195,7 +217,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Featured Products */}
       <section className="py-12">
         <div className="container">
           <div className="mb-8 flex items-center justify-between">
@@ -219,49 +240,51 @@ const Home = () => {
               </Button>
             </Link>
           </div>
-          {isProductsError ? (
+          {isProductsLoading ? (
+            <ProductGrid products={[]} isLoading={true} columns={4} />
+          ) : isProductsError ? (
             <ErrorDisplay
               message={productsErrorMessage}
               onRetry={refetchProducts}
             />
           ) : (
             <ProductGrid products={featuredProducts} columns={4} />
-          )}{" "}
-          {/* featured products should ideally come from a separate API endpoint, but using all products for now*/}
+          )}
         </div>
       </section>
 
-      {!isProductsError && (
-        <section className="bg-muted/30 py-12">
-          <div className="container">
-            <div className="mb-8 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-warning/10">
-                  <TrendingUp className="h-5 w-5 text-warning" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold md:text-3xl">
-                    Best Sellers
-                  </h2>
-                  <p className="text-muted-foreground">
-                    Most popular this week
-                  </p>
-                </div>
+      <section className="bg-muted/30 py-12">
+        <div className="container">
+          <div className="mb-8 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-warning/10">
+                <TrendingUp className="h-5 w-5 text-warning" />
               </div>
-              <Link to="/products">
-                <Button variant="ghost" className="gap-1">
-                  View All
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </Link>
+              <div>
+                <h2 className="text-2xl font-bold md:text-3xl">Best Sellers</h2>
+                <p className="text-muted-foreground">Most popular this week</p>
+              </div>
             </div>
-
-            <ProductGrid products={bestSellers} columns={4} />
+            <Link to="/products">
+              <Button variant="ghost" className="gap-1">
+                View All
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </Link>
           </div>
-        </section>
-      )}
+          {isProductsLoading ? (
+            <ProductGrid products={[]} isLoading={true} columns={4} />
+          ) : isProductsError ? (
+            <ErrorDisplay
+              message={productsErrorMessage}
+              onRetry={refetchProducts}
+            />
+          ) : (
+            <ProductGrid products={bestSellers} columns={4} />
+          )}
+        </div>
+      </section>
 
-      {/* Promo Banner */}
       <section className="py-12">
         <div className="container">
           <Card className="overflow-hidden bg-linear-to-r from-primary/10 via-background to-primary/5">
@@ -279,12 +302,21 @@ const Home = () => {
                   at checkout.
                 </p>
                 <div>
-                  <Link to="/category/audio">
-                    <Button size="lg" className="gap-2">
-                      Shop Audio
-                      <ArrowRight className="h-4 w-4" />
-                    </Button>
-                  </Link>
+                  {audioCategoryId ? (
+                    <Link to={`/category/${audioCategoryId}`}>
+                      <Button size="lg" className="gap-2">
+                        Shop Audio
+                        <ArrowRight className="h-4 w-4" />
+                      </Button>
+                    </Link>
+                  ) : (
+                    <Link to="/products">
+                      <Button size="lg" className="gap-2">
+                        Shop Audio
+                        <ArrowRight className="h-4 w-4" />
+                      </Button>
+                    </Link>
+                  )}
                 </div>
               </div>
               <div className="relative">
@@ -299,44 +331,49 @@ const Home = () => {
         </div>
       </section>
 
-      {!isProductsError && (
-        <section className="py-12">
-          <div className="container">
-            <div className="mb-8 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-info/10">
-                  <Star className="h-5 w-5 text-info" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold md:text-3xl">
-                    New Arrivals
-                  </h2>
-                  <p className="text-muted-foreground">
-                    Fresh products just in
-                  </p>
-                </div>
+      <section className="bg-muted/30 py-12">
+        <div className="container">
+          <div className="mb-8 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-info/10">
+                <Star className="h-5 w-5 text-info" />
               </div>
-              <Link to="/products">
-                <Button variant="ghost" className="gap-1">
-                  View All
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </Link>
+              <div>
+                <h2 className="text-2xl font-bold md:text-3xl">New Arrivals</h2>
+                <p className="text-muted-foreground">Fresh products just in</p>
+              </div>
             </div>
-
-            <ProductGrid products={newArrivals} columns={4} />
+            <Link to="/products">
+              <Button variant="ghost" className="gap-1">
+                View All
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </Link>
           </div>
-        </section>
-      )}
+          {isProductsLoading ? (
+            <ProductGrid products={[]} isLoading={true} columns={4} />
+          ) : isProductsError ? (
+            <ErrorDisplay
+              message={productsErrorMessage}
+              onRetry={refetchProducts}
+            />
+          ) : (
+            <ProductGrid products={newArrivals} columns={4} />
+          )}
+        </div>
+      </section>
 
-      {/* Brands Section */}
       <section className="border-t border-border bg-muted/30 py-12">
         <div className="container">
           <h2 className="mb-8 text-center text-2xl font-bold md:text-3xl">
             Trusted by Leading Brands
           </h2>
           <div className="flex flex-wrap items-center justify-center gap-8 opacity-60">
-            {isBrandsError ? (
+            {isBrandsLoading ? (
+              Array.from({ length: 6 }).map((_, i) => (
+                <Skeleton key={i} className="h-8 w-24" />
+              ))
+            ) : isBrandsError ? (
               <ErrorDisplay
                 message="Failed to load brands"
                 onRetry={refetchBrands}
