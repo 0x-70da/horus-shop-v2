@@ -1,12 +1,14 @@
 // features/addresses/addresses.page.tsx
 import { useState } from "react";
+import { ErrorDisplay } from "@/components/ui/error-display";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAddresses } from "./addresses.hooks";
 import AddressForm from "./components/address-form";
 import type { Address, CreateAddressBody } from "./addresses.types";
 
 export default function AddressesPage() {
-  const { addresses, isAddressesLoading } = useAddresses();
+  const { addresses, isAddressesLoading, isAddressesError, refetchAddresses } =
+    useAddresses();
   const {
     createAddress,
     deleteAddress,
@@ -46,6 +48,14 @@ export default function AddressesPage() {
             onCancel={() => setShowForm(false)}
           />
         </div>
+      )}
+
+      {/* Error */}
+      {isAddressesError && !isAddressesLoading && (
+        <ErrorDisplay
+          message="Failed to load addresses"
+          onRetry={refetchAddresses}
+        />
       )}
 
       {/* Loading */}

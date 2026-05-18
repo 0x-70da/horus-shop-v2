@@ -4,6 +4,7 @@ import { ArrowRight, ChevronRight, Zap, Star, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { ErrorDisplay } from "@/components/ui/error-display";
 import {
   useBrands,
   useCategories,
@@ -19,9 +20,14 @@ import { usePromoBanners } from "@/features/promo/promo.hooks";
 // TODO: Replace mock data imports with API calls
 
 const Home = () => {
-  const { categories } = useCategories();
-  const { products } = useProducts();
-  const { brands } = useBrands();
+  const {
+    categories,
+    isError: isCategoriesError,
+    refetchCategories,
+  } = useCategories();
+  const { products, isProductsError, productsErrorMessage, refetchProducts } =
+    useProducts();
+  const { brands, isError: isBrandsError, refetchBrands } = useBrands();
   const { promoBanners } = usePromoBanners();
   // const { flashDeals } = useFlashDeals();
   const bestSellers = products.filter((p) => p.totalSold > 100);
@@ -148,34 +154,43 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
-            {categories?.map((category, index) => (
-              <motion.div
-                key={category.id}
-                initial={false}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
-              >
-                <Link to={`/category/${category.slug}`}>
-                  <Card className="group cursor-pointer overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1">
-                    <div className="aspect-square overflow-hidden">
-                      <img
-                        src={category.image}
-                        alt={category.name}
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      />
-                    </div>
-                    <CardContent className="p-3 text-center">
-                      <h3 className="font-semibold group-hover:text-primary">
-                        {category.name}
-                      </h3>
-                      <p className="text-xs text-muted-foreground">
-                        {category.products_count} products
-                      </p>
-                    </CardContent>
-                  </Card>
-                </Link>
-              </motion.div>
-            ))}
+            {isCategoriesError ? (
+              <div className="col-span-full">
+                <ErrorDisplay
+                  message="Failed to load categories"
+                  onRetry={refetchCategories}
+                />
+              </div>
+            ) : (
+              categories?.map((category, index) => (
+                <motion.div
+                  key={category.id}
+                  initial={false}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                >
+                  <Link to={`/category/${category.slug}`}>
+                    <Card className="group cursor-pointer overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1">
+                      <div className="aspect-square overflow-hidden">
+                        <img
+                          src={category.image}
+                          alt={category.name}
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        />
+                      </div>
+                      <CardContent className="p-3 text-center">
+                        <h3 className="font-semibold group-hover:text-primary">
+                          {category.name}
+                        </h3>
+                        <p className="text-xs text-muted-foreground">
+                          {category.products_count} products
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                </motion.div>
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -204,7 +219,14 @@ const Home = () => {
               </Button>
             </Link>
           </div>
-          <ProductGrid products={featuredProducts} columns={4} />{" "}
+          {isProductsError ? (
+            <ErrorDisplay
+              message={productsErrorMessage}
+              onRetry={refetchProducts}
+            />
+          ) : (
+            <ProductGrid products={featuredProducts} columns={4} />
+          )}{" "}
           {/* featured products should ideally come from a separate API endpoint, but using all products for now*/}
         </div>
       </section>
@@ -230,7 +252,14 @@ const Home = () => {
             </Link>
           </div>
 
-          <ProductGrid products={bestSellers} columns={4} />
+          {isProductsError ? (
+            <ErrorDisplay
+              message={productsErrorMessage}
+              onRetry={refetchProducts}
+            />
+          ) : (
+            <ProductGrid products={bestSellers} columns={4} />
+          )}
         </div>
       </section>
 
@@ -293,7 +322,14 @@ const Home = () => {
             </Link>
           </div>
 
-          <ProductGrid products={newArrivals} columns={4} />
+          {isProductsError ? (
+            <ErrorDisplay
+              message={productsErrorMessage}
+              onRetry={refetchProducts}
+            />
+          ) : (
+            <ProductGrid products={newArrivals} columns={4} />
+          )}
         </div>
       </section>
 
@@ -304,14 +340,21 @@ const Home = () => {
             Trusted by Leading Brands
           </h2>
           <div className="flex flex-wrap items-center justify-center gap-8 opacity-60">
-            {brands.map((brand) => (
-              <div
-                key={brand.id}
-                className="text-2xl font-bold tracking-tight text-muted-foreground"
-              >
-                {brand.name}
-              </div>
-            ))}
+            {isBrandsError ? (
+              <ErrorDisplay
+                message="Failed to load brands"
+                onRetry={refetchBrands}
+              />
+            ) : (
+              brands.map((brand) => (
+                <div
+                  key={brand.id}
+                  className="text-2xl font-bold tracking-tight text-muted-foreground"
+                >
+                  {brand.name}
+                </div>
+              ))
+            )}
           </div>
         </div>
       </section>

@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { ErrorDisplay } from "@/components/ui/error-display";
 import { motion } from "framer-motion";
 import { ArrowRight, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -8,13 +9,29 @@ import { useCart } from "./cart.hooks";
 import { CartSkeleton } from "./components/CartSkeleton";
 
 const CartPage = () => {
-  const { updateCartItem, removeFromCart, subtotal, items, isCartLoading } =
-    useCart();
+  const {
+    updateCartItem,
+    removeFromCart,
+    subtotal,
+    items,
+    isCartLoading,
+    isCartError,
+    getCartErrorMessage,
+    refetchCart,
+  } = useCart();
   const shipping = subtotal > 100 ? 0 : 10;
   const tax = subtotal * 0.07;
   const finalTotal = subtotal + shipping + tax;
 
   if (isCartLoading) return <CartSkeleton />;
+
+  if (isCartError) {
+    return (
+      <div className="container py-20">
+        <ErrorDisplay message={getCartErrorMessage} onRetry={refetchCart} />
+      </div>
+    );
+  }
 
   if (items?.length === 0) {
     return (

@@ -2,7 +2,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function ProductDetailsSkeleton() {
   return (
-    <div className="container py-8">
+    <div
+      className="container py-8"
+      role="status"
+      aria-live="polite"
+      aria-busy="true"
+    >
+      <span className="sr-only">Loading product details...</span>
       <div className="grid gap-8 lg:grid-cols-2">
         <div className="space-y-4">
           <Skeleton className="aspect-square w-full rounded-2xl" />

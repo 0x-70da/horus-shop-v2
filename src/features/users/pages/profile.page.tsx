@@ -1,6 +1,7 @@
 import { User, MapPin, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ErrorDisplay } from "@/components/ui/error-display";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/features/auth/auth.hooks";
 import { useUser } from "../users.hooks";
@@ -10,8 +11,14 @@ import { ProfileSkeleton } from "../components/ProfileSkeleton";
 const ProfilePage = () => {
   const navigate = useNavigate();
   const { isAuthenticated, logout } = useAuth();
-  const { getProfileData: user, isGetProfileLoading } = useUser();
-  const { addresses } = useAddresses();
+  const {
+    getProfileData: user,
+    isGetProfileLoading,
+    isGetProfileError,
+    getProfileErrorMessage,
+    refetchProfile,
+  } = useUser();
+  const { addresses, isAddressesError, refetchAddresses } = useAddresses();
 
   if (!isAuthenticated)
     return (
@@ -27,6 +34,17 @@ const ProfilePage = () => {
     );
 
   if (isGetProfileLoading) return <ProfileSkeleton />;
+
+  if (isGetProfileError) {
+    return (
+      <div className="container py-20">
+        <ErrorDisplay
+          message={getProfileErrorMessage}
+          onRetry={refetchProfile}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="container py-8">
@@ -56,15 +74,30 @@ const ProfilePage = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {addresses?.map((addr) => (
-              <div key={addr.id} className="border-b pb-2 mb-2 last:border-0">
-                <p className="font-medium">{addr.full_name}</p>
-                <p className="text-sm text-muted-foreground">
-                  {addr.address_line}, {addr.city}, {addr.state} {addr.zip_code}
-                  , {addr.country}
+            {isAddressesError ? (
+              <div className="text-center">
+                <p className="text-sm text-destructive mb-2">
+                  Failed to load addresses.
                 </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => refetchAddresses()}
+                >
+                  Retry
+                </Button>
               </div>
-            ))}
+            ) : (
+              addresses?.map((addr) => (
+                <div key={addr.id} className="border-b pb-2 mb-2 last:border-0">
+                  <p className="font-medium">{addr.full_name}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {addr.address_line}, {addr.city}, {addr.state}{" "}
+                    {addr.zip_code}, {addr.country}
+                  </p>
+                </div>
+              ))
+            )}
           </CardContent>
         </Card>
       </div>

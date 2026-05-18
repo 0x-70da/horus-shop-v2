@@ -6,7 +6,7 @@ import type { AxiosError } from "axios";
 import { getErrorMessage } from "@/lib/get-error-message";
 
 export const useCategories = () => {
-  const { data, isLoading, isError, error } = useQuery<
+  const { data, isLoading, isError, error, refetch } = useQuery<
     ApiSuccess<Category[]>,
     AxiosError<ApiError>
   >({
@@ -24,11 +24,12 @@ export const useCategories = () => {
     isError,
     errorMessage,
     successMessage,
+    refetchCategories: refetch,
   };
 };
 
 export const useBrands = () => {
-  const { data, isLoading, isError, error } = useQuery<
+  const { data, isLoading, isError, error, refetch } = useQuery<
     ApiSuccess<Brand[]>,
     AxiosError<ApiError>
   >({
@@ -46,5 +47,6 @@ export const useBrands = () => {
     isError,
     errorMessage,
     successMessage,
+    refetchBrands: refetch,
   };
 };

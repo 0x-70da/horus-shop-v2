@@ -29,6 +29,7 @@ export const useOrders = (
     isError: isOrdersError,
     error: ordersError,
     isLoading: isOrdersLoading,
+    refetch: refetchOrders,
   } = useQuery<ApiSuccess<OrdersResponse>, AxiosError<ApiError>>({
     queryKey: ["orders"],
     queryFn: () => getOrders(params ?? {}),
@@ -40,6 +41,7 @@ export const useOrders = (
     isError: isOrderError,
     error: orderError,
     isLoading: isOrderLoading,
+    refetch: refetchOrder,
   } = useQuery<ApiSuccess<Order>, AxiosError<ApiError>>({
     queryKey: ["orders"],
     queryFn: () => getOrderById(id!),
@@ -61,6 +63,12 @@ export const useOrders = (
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
       queryClient.invalidateQueries({ queryKey: ["orders"] });
+    },
+    onError: (error) => {
+      toast.error(
+        error.response?.data.message ||
+          "Failed to create order. Please try again.",
+      );
     },
   });
 
@@ -87,10 +95,12 @@ export const useOrders = (
     isOrdersLoading,
     isOrdersError,
     ordersError,
+    refetchOrders,
     order,
     isOrderLoading,
     isOrderError,
     orderError,
+    refetchOrder,
     createOrder: createOrderMutate,
     createOrderData,
     isCreateOrderLoading,
@@ -110,6 +120,7 @@ export const useShippingMethods = () => {
     isError: isShippingError,
     error: shippingError,
     isLoading: isShippingLoading,
+    refetch: refetchShippingMethods,
   } = useQuery({
     queryKey: ["shipping-methods"],
     queryFn: getShippingMethods,
@@ -121,6 +132,7 @@ export const useShippingMethods = () => {
     isShippingError,
     isShippingLoading,
     shippingError,
+    refetchShippingMethods,
   };
 };
 

@@ -2,7 +2,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function CartSkeleton() {
   return (
-    <div className="container py-8">
+    <div
+      className="container py-8"
+      role="status"
+      aria-live="polite"
+      aria-busy="true"
+    >
+      <span className="sr-only">Loading cart...</span>
       <Skeleton className="mb-8 h-9 w-48" />
       <div className="grid gap-8 lg:grid-cols-3">
         <div className="space-y-4 lg:col-span-2">

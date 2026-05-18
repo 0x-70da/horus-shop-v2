@@ -19,6 +19,7 @@ export const useCart = () => {
     isLoading: isCartLoading,
     isError: isCartError,
     error,
+    refetch: refetchCart,
   } = useQuery<ApiSuccess<CartResponse>, AxiosError<ApiError>>({
     queryKey: ["cart"],
     queryFn: getCartItems,
@@ -71,6 +72,9 @@ export const useCart = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
+    onError: () => {
+      toast.error("Failed to update cart item. Please try again.");
+    },
   });
 
   const updateCartItemErrorMessage = getErrorMessage(updateCartItemError);
@@ -87,6 +91,9 @@ export const useCart = () => {
     mutationFn: ({ itemId }) => removeFromCart(itemId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
+    onError: () => {
+      toast.error("Failed to remove item from cart. Please try again.");
     },
   });
 
@@ -105,6 +112,9 @@ export const useCart = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
+    onError: () => {
+      toast.error("Failed to clear cart. Please try again.");
+    },
   });
 
   const clearCartErrorMessage = getErrorMessage(clearCartError);
@@ -115,6 +125,7 @@ export const useCart = () => {
     isCartLoading,
     isCartError,
     getCartErrorMessage,
+    refetchCart,
     getCartSuccessMessage,
     subtotal,
     itemCount,

@@ -2,7 +2,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function ProfileSkeleton() {
   return (
-    <div className="container py-8">
+    <div
+      className="container py-8"
+      role="status"
+      aria-live="polite"
+      aria-busy="true"
+    >
+      <span className="sr-only">Loading profile...</span>
       <Skeleton className="mb-8 h-9 w-40" />
       <div className="grid gap-6 md:grid-cols-2">
         <div className="rounded-lg border p-6">

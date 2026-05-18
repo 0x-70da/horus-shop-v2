@@ -1,6 +1,7 @@
 // features/orders/orders.page.tsx
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { ErrorDisplay } from "@/components/ui/error-display";
 import { useOrders } from "./orders.hooks";
 import { OrdersSkeleton } from "./components/OrdersSkeleton";
 import type { OrderStatus } from "./orders.types";
@@ -28,11 +29,12 @@ export default function OrdersPage() {
   const [activeStatus, setActiveStatus] = useState<OrderStatus | undefined>();
   const [page, setPage] = useState(1);
 
-  const { orders, pagination, isOrdersLoading, isOrdersError } = useOrders("", {
-    status: activeStatus,
-    page,
-    limit: 10,
-  });
+  const { orders, pagination, isOrdersLoading, isOrdersError, refetchOrders } =
+    useOrders("", {
+      status: activeStatus,
+      page,
+      limit: 10,
+    });
 
   return (
     <div className="container py-8 max-w-3xl">
@@ -62,9 +64,12 @@ export default function OrdersPage() {
       {/* States */}
       {isOrdersLoading && <OrdersSkeleton />}
       {isOrdersError && (
-        <p className="text-center py-10 text-destructive">
-          Failed to load orders
-        </p>
+        <div className="py-10">
+          <ErrorDisplay
+            message="Failed to load orders"
+            onRetry={refetchOrders}
+          />
+        </div>
       )}
       {!isOrdersLoading && !isOrdersError && orders.length === 0 && (
         <p className="text-center py-10 text-muted-foreground">

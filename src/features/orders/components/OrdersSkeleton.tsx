@@ -2,7 +2,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function OrdersSkeleton() {
   return (
-    <div className="space-y-3">
+    <div
+      className="space-y-3"
+      role="status"
+      aria-live="polite"
+      aria-busy="true"
+    >
+      <span className="sr-only">Loading orders...</span>
       {Array.from({ length: 4 }).map((_, i) => (
         <div key={i} className="block border rounded-lg p-4">
           <div className="flex items-center justify-between mb-3">
