@@ -87,31 +87,28 @@ export default function CheckoutPage() {
       return;
     }
 
-    try {
-      const result = await createOrder({
-        addressId: selectedAddress,
-        shippingMethodId: selectedShipping,
-        paymentMethod,
-        promoCode: promoResult ? promoCode : undefined,
-        notes: notes || undefined,
-      });
+    const result = await createOrder({
+      addressId: selectedAddress,
+      shippingMethodId: selectedShipping,
+      paymentMethod,
+      promoCode: promoResult ? promoCode : undefined,
+      notes: notes || undefined,
+    });
 
-      if (result.data?.requiresPayment && result.data?.clientSecret) {
-        navigate("/checkout/payment", {
-          state: {
-            clientSecret: result.data?.clientSecret,
-            orderId: result.data?.order_id,
-            total: result.data?.total,
-          },
-        });
-        return;
-      }
-
-      navigate(`/orders/${result.data?.order_id}`, {
-        state: { newOrder: true },
+    if (result.data?.requiresPayment && result.data?.clientSecret) {
+      navigate("/checkout/payment", {
+        state: {
+          clientSecret: result.data?.clientSecret,
+          orderId: result.data?.order_id,
+          total: result.data?.total,
+        },
       });
-    } catch {
+      return;
     }
+
+    navigate(`/orders/${result.data?.order_id}`, {
+      state: { newOrder: true },
+    });
   };
 
   return (
