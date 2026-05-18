@@ -122,10 +122,10 @@ export const useAuth = () => {
   const resetPasswordErrorMessage = getErrorMessage(resetPasswordError);
   const resetPasswordSuccessMessage = resetPasswordData?.message;
 
-  const { data: userData } = useQuery<
-    ApiSuccess<AuthUser>,
-    AxiosError<ApiError>
-  >({
+  const {
+    data: userData,
+    isLoading: isUserLoading,
+  } = useQuery<ApiSuccess<AuthUser>, AxiosError<ApiError>>({
     queryKey: ["auth", "user"],
     queryFn: getMe,
     retry: false,
@@ -144,6 +144,8 @@ export const useAuth = () => {
     mutationFn: logout,
     onSuccess: () => {
       queryClient.removeQueries({ queryKey: ["auth", "user"] });
+      queryClient.removeQueries({ queryKey: ["cart"] });
+      queryClient.removeQueries({ queryKey: ["wishlist"] });
       navigate("/login");
     },
   });
@@ -178,6 +180,7 @@ export const useAuth = () => {
     resetPasswordSuccessMessage,
     user: userData?.data ?? null,
     isAuthenticated: !!userData?.data || false,
+    isUserLoading,
     logout: logoutMutate,
     isLogoutPending,
     isLogoutError,

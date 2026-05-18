@@ -1,4 +1,5 @@
 import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
+import { toast } from "sonner";
 
 let isRefreshing = false;
 let queue: Array<{ resolve: () => void; reject: (error: unknown) => void }> =
@@ -14,7 +15,7 @@ export const api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  timeout: 5000,
+  timeout: parseInt(import.meta.env.VITE_API_TIMEOUT ?? "15000", 10),
   withCredentials: true,
 });
 if (!import.meta.env.VITE_API_BASE_URL) {
@@ -59,6 +60,7 @@ api.interceptors.response.use(
       return api(originalRequest);
     } catch (refreshError) {
       processQueue(refreshError);
+      toast.error("Session expired. Please log in again.");
       if (window.location.pathname !== "/login") {
         window.location.href = "/login";
       }
