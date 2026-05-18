@@ -28,7 +28,13 @@ const ProductGrid = ({
 
   if (isLoading) {
     return (
-      <div className={cn("grid gap-4 md:gap-6", gridCols[columns], className)}>
+      <div
+        className={cn("grid gap-4 md:gap-6", gridCols[columns], className)}
+        role="status"
+        aria-live="polite"
+        aria-label="Loading products"
+      >
+        <span className="sr-only">Loading products...</span>
         {Array.from({ length: 8 }).map((_, i) => (
           <SkeletonCard key={i} />
         ))}
