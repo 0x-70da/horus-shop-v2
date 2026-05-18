@@ -1,92 +1,36 @@
-// features/orders/checkout.payment.page.tsx
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { loadStripe } from "@stripe/stripe-js";
-import {
-  Elements,
-  PaymentElement,
-  useStripe,
-  useElements,
-} from "@stripe/react-stripe-js";
+import { Skeleton } from "@/components/ui/skeleton";
+import StripeProvider from "./stripe.provider";
+import PaymentForm from "./PaymentForm";
+import type { PaymentPageState } from "./stripe.types";
 
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY!);
-
-interface LocationState {
-  clientSecret: string;
-  orderId: string;
-  total: number;
-}
-
-// ===== Payment Form =====
-function PaymentForm({ orderId, total }: { orderId: string; total: number }) {
-  const stripe = useStripe();
-  const elements = useElements();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!stripe || !elements) return;
-
-    setLoading(true);
-    setError(null);
-
-    const { error: submitError } = await elements.submit();
-    if (submitError) {
-      setError(submitError.message ?? "Validation error");
-      setLoading(false);
-      return;
-    }
-
-    const { error: confirmError } = await stripe.confirmPayment({
-      elements,
-      confirmParams: {
-        return_url: `${window.location.origin}/checkout/payment/status?orderId=${orderId}`,
-      },
-    });
-
-    if (confirmError) {
-      setError(confirmError.message ?? "Payment failed");
-      setLoading(false);
-    }
-    // لو نجح → Stripe بيعمل redirect تلقائي
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <PaymentElement />
-
-      {error && (
-        <p className="text-sm text-destructive bg-destructive/10 p-3 rounded">
-          {error}
-        </p>
-      )}
-
-      <button
-        type="submit"
-        disabled={!stripe || !elements || loading}
-        className="w-full bg-black text-white py-3 rounded-lg font-medium
-                   disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {loading ? "Processing..." : `Pay ${total} EGP`}
-      </button>
-    </form>
-  );
-}
-
-// ===== Payment Page =====
 export default function CheckoutPaymentPage() {
   const location = useLocation();
   const navigate = useNavigate();
-  const state = location.state as LocationState | null;
+  const state = location.state as PaymentPageState | null;
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     if (!state?.clientSecret) {
       navigate("/cart", { replace: true });
+      return;
     }
+    setReady(true);
   }, [state, navigate]);
 
-  if (!state?.clientSecret) return null;
+  if (!state?.clientSecret || !ready) {
+    return (
+      <div className="container max-w-md py-12">
+        <Skeleton className="mb-2 h-8 w-56" />
+        <Skeleton className="mb-8 h-4 w-32" />
+        <div className="rounded-lg border p-6 space-y-4">
+          <Skeleton className="h-40 w-full rounded" />
+          <Skeleton className="h-12 w-full rounded-lg" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container max-w-md py-12">
@@ -97,19 +41,13 @@ export default function CheckoutPaymentPage() {
       </p>
 
       <div className="border rounded-lg p-6">
-        <Elements
-          stripe={stripePromise}
-          options={{
-            clientSecret: state.clientSecret,
-            appearance: { theme: "stripe" },
-          }}
-        >
+        <StripeProvider clientSecret={state.clientSecret}>
           <PaymentForm orderId={state.orderId} total={state.total} />
-        </Elements>
+        </StripeProvider>
       </div>
 
       <p className="text-center text-xs text-muted-foreground mt-4">
-        🔒 Secured by Stripe
+        Secured by Stripe
       </p>
     </div>
   );

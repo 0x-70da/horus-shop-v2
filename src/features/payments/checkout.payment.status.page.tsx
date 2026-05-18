@@ -1,7 +1,8 @@
-// features/orders/checkout.payment.status.page.tsx
 import { useEffect, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { loadStripe } from "@stripe/stripe-js";
+import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY!);
 
@@ -39,8 +40,9 @@ export default function CheckoutPaymentStatusPage() {
 
   if (status === "loading") {
     return (
-      <div className="container max-w-md py-20 text-center">
-        <p>Verifying payment...</p>
+      <div className="container max-w-md py-20 text-center flex flex-col items-center gap-4">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <p className="text-muted-foreground">Verifying your payment...</p>
       </div>
     );
   }
@@ -65,7 +67,9 @@ export default function CheckoutPaymentStatusPage() {
             ⏳
           </div>
           <h1 className="text-2xl font-bold">Payment Processing</h1>
-          <p className="text-muted-foreground">We'll update you shortly.</p>
+          <p className="text-muted-foreground">
+            Your payment is being processed. We'll update you shortly.
+          </p>
         </>
       )}
 
@@ -75,21 +79,32 @@ export default function CheckoutPaymentStatusPage() {
             ✕
           </div>
           <h1 className="text-2xl font-bold">Payment Failed</h1>
-          <p className="text-muted-foreground">Something went wrong.</p>
+          <p className="text-muted-foreground">
+            Your payment didn't go through. You can try again or use a different
+            payment method.
+          </p>
         </>
       )}
 
       <div className="flex gap-3 justify-center pt-2">
         {orderId && (
-          <Link
-            to={`/orders/${orderId}`}
-            className="bg-black text-white px-6 py-2 rounded-lg text-sm"
-          >
-            View Order
+          <Link to={`/orders/${orderId}`}>
+            <Button variant="outline" size="sm">
+              View Order
+            </Button>
           </Link>
         )}
-        <Link to="/products" className="border px-6 py-2 rounded-lg text-sm">
-          Continue Shopping
+        {status === "failed" && (
+          <Link to="/checkout">
+            <Button size="sm">
+              Try Again
+            </Button>
+          </Link>
+        )}
+        <Link to="/products">
+          <Button variant="outline" size="sm">
+            Continue Shopping
+          </Button>
         </Link>
       </div>
     </div>
