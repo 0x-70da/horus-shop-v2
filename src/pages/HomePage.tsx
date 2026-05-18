@@ -6,7 +6,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ErrorDisplay } from "@/components/ui/error-display";
 import { Skeleton } from "@/components/ui/skeleton";
-import { SkeletonCard } from "@/components/ui/skeleton-card";
 import {
   useBrands,
   useCategories,
@@ -48,8 +47,8 @@ const Home = () => {
   const smartphoneCategoryId = categories.find(
     (c) => c.name.toLowerCase().includes("phone") || c.slug === "smartphones",
   )?.id;
-  const audioCategoryId = categories.find(
-    (c) => c.name.toLowerCase().includes("audio"),
+  const audioCategoryId = categories.find((c) =>
+    c.name.toLowerCase().includes("audio"),
   )?.id;
   const heroProductId = featuredProducts[0]?.id;
 
@@ -258,12 +257,8 @@ const Home = () => {
                 <TrendingUp className="h-5 w-5 text-warning" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold md:text-3xl">
-                  Best Sellers
-                </h2>
-                <p className="text-muted-foreground">
-                  Most popular this week
-                </p>
+                <h2 className="text-2xl font-bold md:text-3xl">Best Sellers</h2>
+                <p className="text-muted-foreground">Most popular this week</p>
               </div>
             </div>
             <Link to="/products">
@@ -340,12 +335,8 @@ const Home = () => {
                 <Star className="h-5 w-5 text-info" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold md:text-3xl">
-                  New Arrivals
-                </h2>
-                <p className="text-muted-foreground">
-                  Fresh products just in
-                </p>
+                <h2 className="text-2xl font-bold md:text-3xl">New Arrivals</h2>
+                <p className="text-muted-foreground">Fresh products just in</p>
               </div>
             </div>
             <Link to="/products">
