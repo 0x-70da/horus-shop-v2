@@ -1,6 +1,6 @@
 // features/orders/checkout.page.tsx
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   useShippingMethods,
   useValidatePromoCode,
@@ -135,9 +135,9 @@ export default function CheckoutPage() {
             {!addresses?.length ? (
               <p className="text-sm text-muted-foreground">
                 No addresses found.{" "}
-                <a href="/profile/addresses" className="underline">
+                <Link to="/profile/addresses" className="underline">
                   Add one
-                </a>
+                </Link>
               </p>
             ) : (
               <div className="space-y-2">
