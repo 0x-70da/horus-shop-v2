@@ -15,7 +15,10 @@ export const api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  timeout: parseInt(import.meta.env.VITE_API_TIMEOUT ?? "15000", 10),
+  timeout: (() => {
+    const raw = parseInt(import.meta.env.VITE_API_TIMEOUT ?? "", 10);
+    return Number.isFinite(raw) && raw > 0 ? raw : 15000;
+  })(),
   withCredentials: true,
 });
 if (!import.meta.env.VITE_API_BASE_URL) {

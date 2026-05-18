@@ -21,21 +21,26 @@ export default function CheckoutPaymentStatusPage() {
       return;
     }
 
-    stripePromise.then((stripe) => {
-      if (!stripe) return;
-      stripe.retrievePaymentIntent(clientSecret).then(({ paymentIntent }) => {
-        switch (paymentIntent?.status) {
-          case "succeeded":
-            setStatus("success");
-            break;
-          case "processing":
-            setStatus("processing");
-            break;
-          default:
-            setStatus("failed");
+    stripePromise
+      .then((stripe) => {
+        if (!stripe) {
+          setStatus("failed");
+          return;
         }
-      });
-    });
+        stripe.retrievePaymentIntent(clientSecret).then(({ paymentIntent }) => {
+          switch (paymentIntent?.status) {
+            case "succeeded":
+              setStatus("success");
+              break;
+            case "processing":
+              setStatus("processing");
+              break;
+            default:
+              setStatus("failed");
+          }
+        });
+      })
+      .catch(() => setStatus("failed"));
   }, [clientSecret]);
 
   if (status === "loading") {

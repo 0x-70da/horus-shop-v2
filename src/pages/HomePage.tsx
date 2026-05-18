@@ -50,7 +50,7 @@ const Home = () => {
   const audioCategoryId = categories.find((c) =>
     c.name.toLowerCase().includes("audio"),
   )?.id;
-  const heroProductId = featuredProducts[0]?.id;
+  const heroProduct = featuredProducts[0];
 
   return (
     <div className="flex flex-col">
@@ -125,11 +125,15 @@ const Home = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-xs text-muted-foreground">Featured</p>
-                      <p className="font-semibold">iPhone 15 Pro Max</p>
-                      <p className="text-lg font-bold text-primary">$1,199</p>
+                      <p className="font-semibold">
+                        {heroProduct?.name ?? "Featured Product"}
+                      </p>
+                      <p className="text-lg font-bold text-primary">
+                        {heroProduct ? `$${heroProduct.price}` : ""}
+                      </p>
                     </div>
-                    {heroProductId && (
-                      <Link to={`/products/${heroProductId}`}>
+                    {heroProduct?.id && (
+                      <Link to={`/products/${heroProduct.id}`}>
                         <Button size="sm">View</Button>
                       </Link>
                     )}

@@ -43,30 +43,31 @@ export default function PaymentForm({ orderId, total }: PaymentFormProps) {
     setIsLoading(true);
     setError(null);
 
-    const { error: submitError } = await elements.submit();
-    if (submitError) {
-      setError(submitError.message ?? "Something went wrong");
+    try {
+      const { error: submitError } = await elements.submit();
+      if (submitError) {
+        setError(submitError.message ?? "Something went wrong");
+        return;
+      }
+
+      const { error: confirmError } = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: `${window.location.origin}/checkout/payment/status?orderId=${orderId}`,
+        },
+      });
+
+      if (confirmError) {
+        const message =
+          confirmError.type === "card_error" ||
+          confirmError.type === "validation_error"
+            ? (confirmError.message ?? "Payment failed")
+            : "An unexpected error occurred. Please try again.";
+        setError(message);
+      }
+    } finally {
       setIsLoading(false);
-      return;
     }
-
-    const { error: confirmError } = await stripe.confirmPayment({
-      elements,
-      confirmParams: {
-        return_url: `${window.location.origin}/checkout/payment/status?orderId=${orderId}`,
-      },
-    });
-
-    if (confirmError) {
-      const message =
-        confirmError.type === "card_error" ||
-        confirmError.type === "validation_error"
-          ? (confirmError.message ?? "Payment failed")
-          : "An unexpected error occurred. Please try again.";
-      setError(message);
-    }
-
-    setIsLoading(false);
   };
 
   return (
