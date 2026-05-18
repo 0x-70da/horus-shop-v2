@@ -118,6 +118,9 @@ export const useAuth = () => {
       toast.success(response.message);
       navigate("/login");
     },
+    onError: () => {
+      toast.error("Failed to reset password. Please try again.");
+    }
   });
   const resetPasswordErrorMessage = getErrorMessage(resetPasswordError);
   const resetPasswordSuccessMessage = resetPasswordData?.message;
