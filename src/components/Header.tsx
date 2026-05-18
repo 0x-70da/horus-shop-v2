@@ -31,7 +31,7 @@ import {
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { useCategories } from "../features/categories/categories.hooks";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/features/auth/auth.hooks";
 import { useWishlist } from "@/features/wishlist/wishlist.hooks";
@@ -59,12 +59,10 @@ const Header = () => {
 
   const wishlistItemsCount = wishlistItems.length;
   const cartItemsCount =
-    useMemo(() => {
-      return cartItems?.reduce(
-        (total: number, item: { quantity: number }) => total + item.quantity,
-        0,
-      );
-    }, [cartItems]) ?? 0;
+    cartItems?.reduce(
+      (total: number, item: { quantity: number }) => total + item.quantity,
+      0,
+    ) ?? 0;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
