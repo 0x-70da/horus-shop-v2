@@ -96,9 +96,7 @@ export default function CheckoutPaymentStatusPage() {
         )}
         {status === "failed" && (
           <Link to="/checkout">
-            <Button size="sm">
-              Try Again
-            </Button>
+            <Button size="sm">Try Again</Button>
           </Link>
         )}
         <Link to="/products">

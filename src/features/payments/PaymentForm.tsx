@@ -22,7 +22,12 @@ export default function PaymentForm({ orderId, total }: PaymentFormProps) {
 
   if (!stripe || !elements) {
     return (
-      <div className="space-y-4" role="status" aria-live="polite" aria-busy="true">
+      <div
+        className="space-y-4"
+        role="status"
+        aria-live="polite"
+        aria-busy="true"
+      >
         <span className="sr-only">Loading payment form...</span>
         <Skeleton className="h-40 w-full rounded" />
         <Skeleton className="h-12 w-full rounded-lg" />

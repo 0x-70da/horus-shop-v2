@@ -122,10 +122,10 @@ export const useAuth = () => {
   const resetPasswordErrorMessage = getErrorMessage(resetPasswordError);
   const resetPasswordSuccessMessage = resetPasswordData?.message;
 
-  const {
-    data: userData,
-    isLoading: isUserLoading,
-  } = useQuery<ApiSuccess<AuthUser>, AxiosError<ApiError>>({
+  const { data: userData, isLoading: isUserLoading } = useQuery<
+    ApiSuccess<AuthUser>,
+    AxiosError<ApiError>
+  >({
     queryKey: ["auth", "user"],
     queryFn: getMe,
     retry: false,
